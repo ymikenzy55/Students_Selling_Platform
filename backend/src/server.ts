@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.routes';
 import listingRoutes from './routes/listing.routes';
 import bidRoutes from './routes/bid.routes';
 import messageRoutes from './routes/message.routes';
+import transactionRoutes from './routes/transaction.routes';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/bids', bidRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

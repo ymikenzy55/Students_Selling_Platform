@@ -136,6 +136,17 @@
         </div>
     </div>
 
+    <!-- TRANSACTIONS UI -->
+    <div class="card" id="transactionsSection">
+        <div class="flex" style="align-items: center; justify-content: space-between;">
+            <h2>Transactions & Escrow</h2>
+            <button onclick="fetchTransactions()" style="width: auto; padding: 8px 15px;" class="btn-secondary">Refresh Transactions</button>
+        </div>
+        <div id="transactionsContainer" class="listing-grid">
+            <p>No transactions yet.</p>
+        </div>
+    </div>
+
     <!-- CONSOLE -->
     <div class="card">
         <h2>API Response Console</h2>
@@ -191,12 +202,14 @@
             }
             fetchMarketplace();
             fetchActiveConversations();
+            fetchTransactions();
         } else {
             authSection.classList.remove('hidden');
             logoutBtn.classList.add('hidden');
             sellerSection.classList.add('hidden');
             buyerSection.classList.add('hidden');
             document.getElementById('messagingSection').classList.add('hidden');
+            document.getElementById('transactionsSection').classList.add('hidden');
             statusText.innerText = "Not logged in";
             document.getElementById('listingsContainer').innerHTML = '<p>Log in to interact with the marketplace.</p>';
         }
@@ -277,11 +290,14 @@
             card.className = 'listing-card';
             
             let actionHtml = '';
-            if (currentUser && currentUser.role === 'BUYER') {
+            if (item.isSoldOut) {
+                actionHtml = `<div style="margin-top: auto; padding-top:10px;"><span class="badge" style="background: #ef4444; color: white;">Sold Out</span></div>`;
+            } else if (currentUser && currentUser.role === 'BUYER') {
                 actionHtml = `
                     <div style="margin-top: auto; padding-top: 10px;">
                         <input type="number" id="bid_${item.id}" placeholder="Your Bid $" value="${item.price}" style="margin: 5px 0;">
-                        <button onclick="placeBid('${item.id}')" style="background-color: #2563eb; padding: 8px;">Place Bid</button>
+                        <button onclick="placeBid('${item.id}')" style="background-color: #2563eb; padding: 8px; margin-bottom: 5px;">Place Bid</button>
+                        <button onclick="buyNow('${item.id}', '${item.price}')" style="background-color: #10b981; padding: 8px;">Buy Now (Escrow)</button>
                     </div>
                 `;
             } else if (currentUser && currentUser.id === item.sellerId) {
@@ -453,6 +469,55 @@
     function startNewChat() {
         const uid = document.getElementById('newChatUserId').value.trim();
         if (uid) openChat(uid, "User ID: " + uid.substring(0, 6) + "...");
+    }
+
+    // ----- TRANSACTIONS -----
+    async function buyNow(listingId, amount) {
+        if (!confirm(`Are you sure you want to securely pay $${amount} into Escrow for this item?`)) return;
+        const res = await api('/transactions', 'POST', { listingId, amount });
+        if (res && res.status === 201) {
+            alert('Payment secured in Escrow!');
+            fetchMarketplace();
+            fetchTransactions();
+        }
+    }
+
+    async function fetchTransactions() {
+        if (!currentUser) return;
+        const res = await api('/transactions');
+        const container = document.getElementById('transactionsContainer');
+        if (!res || res.status !== 200) { container.innerHTML = '<p>Error.</p>'; return; }
+        
+        container.innerHTML = '';
+        if (res.data.length === 0) { container.innerHTML = '<p>No transactions found.</p>'; return; }
+        
+        res.data.forEach(tx => {
+            const card = document.createElement('div');
+            card.className = 'listing-card';
+            const isBuyer = tx.buyerId === currentUser.id;
+            const roleText = isBuyer ? `Seller: ${tx.listing.seller.name}` : `Buyer: ${tx.buyer.name}`;
+            const statusColor = tx.status === 'COMPLETED' ? 'btn-success' : 'btn-secondary';
+            
+            card.innerHTML = `
+                <h4>${tx.listing.title}</h4>
+                <p><strong>Amount:</strong> <span style="color:var(--primary); font-weight:bold;">$${tx.amount}</span></p>
+                <p><strong>${roleText}</strong></p>
+                <p><strong>Status:</strong> <span class="badge ${statusColor}" style="color:white;">${tx.status.replace(/_/g, ' ')}</span></p>
+                ${isBuyer && tx.status === 'HELD_IN_ESCROW' ? `
+                    <button onclick="releaseEscrow('${tx.id}')" style="background-color: #10b981; margin-top: 10px; padding: 8px;">✅ Item Received: Release Funds</button>
+                ` : ''}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    async function releaseEscrow(txId) {
+        if (!confirm('Are you sure you received the item? This will release the money to the seller permanently.')) return;
+        const res = await api(`/transactions/${txId}/release`, 'PUT');
+        if (res && res.status === 200) {
+            alert('Funds released successfully!');
+            fetchTransactions();
+        }
     }
 
     // Run on load
