@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
+import Tesseract from 'tesseract.js';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
@@ -106,6 +107,7 @@ export const getMe = async (req: any, res: Response): Promise<void> => {
   }
 };
 
+
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.userId;
@@ -119,9 +121,45 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
       if (ghanaCardNumber) data.ghanaCardNumber = ghanaCardNumber;
       if (ghanaCardImageUrl) data.ghanaCardImageUrl = ghanaCardImageUrl;
       
-      // In a real app we would call a 3rd party API to verify the card.
-      // For this MVP, simply providing a card or image artificially verifies them.
-      data.isVerified = true; 
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+      const currentName = name || user?.name || '';
+      
+      // If an image was provided, run OCR to verify the name matches!
+      if (ghanaCardImageUrl) {
+          console.log(`Running OCR verification for ${currentName}...`);
+          try {
+              // Run tesseract against the image URL provided (in production this would be an S3 URL)
+              const { data: { text } } = await Tesseract.recognize(ghanaCardImageUrl, 'eng');
+              console.log('OCR Extracted Text:', text);
+              
+              const extractedText = text.toUpperCase();
+              
+              // 1. Basic check: ensure it's a Ghana Card
+              if (!extractedText.includes('GHANA') && !extractedText.includes('NATIONAL ID')) {
+                  res.status(400).json({ message: 'The uploaded image does not appear to be a valid Ghana Card.' });
+                  return;
+              }
+              
+              // 2. Advanced check: Verify their registered First/Last name appears on the card
+              const nameParts = currentName.toUpperCase().split(' ');
+              const hasMatchingName = nameParts.some((part: string) => part.length > 2 && extractedText.includes(part));
+              
+              if (!hasMatchingName) {
+                  res.status(400).json({ message: `Verification failed. The name on the card does not match your registered name: ${currentName}` });
+                  return;
+              }
+              
+              console.log(`OCR Verification Successful for ${currentName}!`);
+              data.isVerified = true; 
+          } catch (ocrError) {
+              console.error('OCR Processing Error:', ocrError);
+              res.status(500).json({ message: 'Failed to process the ID image. Please try again with a clearer photo.' });
+              return;
+          }
+      } else {
+        // Fallback for manual number entry (if allowed by business logic)
+        data.isVerified = true; 
+      }
     }
 
     const updatedUser = await prisma.user.update({
