@@ -6,15 +6,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
   id              String    @id @default(uuid())
   email           String    @unique
+  password        String
   name            String?
-  role            UserRole  @default(BUYER)
+  role            String    @default("BUYER")
   ghanaCardNumber String?   @unique
   isVerified      Boolean   @default(false)
   
@@ -29,11 +30,6 @@ model User {
   updatedAt       DateTime  @updatedAt
 }
 
-enum UserRole {
-  BUYER
-  SELLER
-  ADMIN
-}
 
 model Listing {
   id          String   @id @default(uuid())
@@ -59,7 +55,7 @@ model Listing {
 model Bid {
   id          String   @id @default(uuid())
   amount      Float
-  status      BidStatus @default(PENDING)
+  status      String    @default("PENDING")
   
   listingId   String
   listing     Listing  @relation(fields: [listingId], references: [id])
@@ -71,11 +67,6 @@ model Bid {
   updatedAt   DateTime @updatedAt
 }
 
-enum BidStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
 
 model Message {
   id          String   @id @default(uuid())
@@ -93,7 +84,7 @@ model Message {
 model Transaction {
   id          String   @id @default(uuid())
   amount      Float
-  status      TxStatus @default(HELD_IN_ESCROW)
+  status      String    @default("HELD_IN_ESCROW")
   
   listingId   String
   listing     Listing  @relation(fields: [listingId], references: [id])
@@ -105,9 +96,3 @@ model Transaction {
   updatedAt   DateTime @updatedAt
 }
 
-enum TxStatus {
-  HELD_IN_ESCROW
-  RELEASED_TO_SELLER
-  REFUNDED
-  DISPUTED
-}
