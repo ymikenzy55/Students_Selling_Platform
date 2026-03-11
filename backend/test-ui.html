@@ -70,8 +70,14 @@
         <div class="card hidden" id="profileSection">
             <h2>My Profile</h2>
             <p id="verificationStatus">Verification Status: <span class="badge btn-danger" style="color:white;">Not Verified</span></p>
-            <input type="text" id="ghanaCardInput" placeholder="Enter Ghana Card Number">
-            <button onclick="verifyAccount()" class="btn-secondary">Submit for Verification</button>
+            <hr>
+            <h3>Verify Identity</h3>
+            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 5px;">Option 1: Enter ID Number</p>
+            <input type="text" id="ghanaCardInput" placeholder="Enter Ghana Card Number (e.g., GHA-123456789-0)">
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 15px 0 5px 0;">Option 2: Live Scan / Image Upload</p>
+            <input type="file" id="ghanaCardImage" accept="image/*" style="border: 1px dashed #d1d5db; padding: 20px; background: #f9fafb;">
+            
+            <button onclick="verifyAccount()" class="btn-secondary" style="margin-top: 15px;">Submit ID for Verification</button>
         </div>
 
         <!-- SELLER CONTROLS -->
@@ -271,14 +277,24 @@
     }
 
     async function verifyAccount() {
-        const ghanaCardNumber = document.getElementById('ghanaCardInput').value;
-        if (!ghanaCardNumber) return alert("Enter a card number first.");
+        const ghanaCardNumber = document.getElementById('ghanaCardInput').value.trim();
+        const fileInput = document.getElementById('ghanaCardImage');
+        const hasFile = fileInput.files && fileInput.files.length > 0;
         
-        const res = await api('/auth/me', 'PUT', { ghanaCardNumber });
+        if (!ghanaCardNumber && !hasFile) return alert("Please enter an ID number or upload an image of your Ghana Card.");
+        
+        let payload = {};
+        if (ghanaCardNumber) payload.ghanaCardNumber = ghanaCardNumber;
+        if (hasFile) {
+            // In a real app, this would upload to AWS S3/Cloudinary first
+            payload.ghanaCardImageUrl = `https://identity-bucket.example.com/mock-upload-${Date.now()}.jpg`;
+        }
+        
+        const res = await api('/auth/me', 'PUT', payload);
         if (res && res.status === 200) {
             currentUser = res.data.user;
             updateUI();
-            alert("Verification submitted successfully!");
+            alert("Verification documents submitted successfully!");
         }
     }
 

@@ -17,6 +17,7 @@ model User {
   name            String?
   role            String    @default("BUYER")
   ghanaCardNumber String?   @unique
+  ghanaCardImageUrl String?
   isVerified      Boolean   @default(false)
   
   // Relations
