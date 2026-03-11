@@ -66,6 +66,14 @@
             </div>
         </div>
 
+        <!-- PROFILE SECTION -->
+        <div class="card hidden" id="profileSection">
+            <h2>My Profile</h2>
+            <p id="verificationStatus">Verification Status: <span class="badge btn-danger" style="color:white;">Not Verified</span></p>
+            <input type="text" id="ghanaCardInput" placeholder="Enter Ghana Card Number">
+            <button onclick="verifyAccount()" class="btn-secondary">Submit for Verification</button>
+        </div>
+
         <!-- SELLER CONTROLS -->
         <div class="card hidden" id="sellerSection">
             <h2>Seller Dashboard</h2>
@@ -183,15 +191,24 @@
 
     function updateUI() {
         const authSection = document.getElementById('authSection');
+        const profileSection = document.getElementById('profileSection');
         const sellerSection = document.getElementById('sellerSection');
         const buyerSection = document.getElementById('buyerSection');
         const logoutBtn = document.getElementById('logoutBtn');
         const statusText = document.getElementById('user-status');
+        const verifyStatus = document.getElementById('verificationStatus');
 
         if (currentUser) {
             authSection.classList.add('hidden');
+            profileSection.classList.remove('hidden');
             logoutBtn.classList.remove('hidden');
             statusText.innerHTML = `Logged in as <b>${currentUser.name}</b> (<span class="badge">${currentUser.role}</span>)`;
+            
+            if (currentUser.isVerified) {
+                verifyStatus.innerHTML = `Verification Status: <span class="badge btn-success" style="color:white;">Verified User</span>`;
+            } else {
+                verifyStatus.innerHTML = `Verification Status: <span class="badge btn-danger" style="color:white;">Not Verified</span>`;
+            }
             
             if (currentUser.role === 'SELLER') {
                 sellerSection.classList.remove('hidden');
@@ -205,6 +222,7 @@
             fetchTransactions();
         } else {
             authSection.classList.remove('hidden');
+            profileSection.classList.add('hidden');
             logoutBtn.classList.add('hidden');
             sellerSection.classList.add('hidden');
             buyerSection.classList.add('hidden');
@@ -252,6 +270,18 @@
         log("Logged out successfully.");
     }
 
+    async function verifyAccount() {
+        const ghanaCardNumber = document.getElementById('ghanaCardInput').value;
+        if (!ghanaCardNumber) return alert("Enter a card number first.");
+        
+        const res = await api('/auth/me', 'PUT', { ghanaCardNumber });
+        if (res && res.status === 200) {
+            currentUser = res.data.user;
+            updateUI();
+            alert("Verification submitted successfully!");
+        }
+    }
+
     // ----- INITIALIZE -----
     async function checkSession() {
         const savedToken = localStorage.getItem('test_token');
@@ -297,7 +327,6 @@
                     <div style="margin-top: auto; padding-top: 10px;">
                         <input type="number" id="bid_${item.id}" placeholder="Your Bid $" value="${item.price}" style="margin: 5px 0;">
                         <button onclick="placeBid('${item.id}')" style="background-color: #2563eb; padding: 8px; margin-bottom: 5px;">Place Bid</button>
-                        <button onclick="buyNow('${item.id}', '${item.price}')" style="background-color: #10b981; padding: 8px;">Buy Now (Escrow)</button>
                     </div>
                 `;
             } else if (currentUser && currentUser.id === item.sellerId) {
@@ -353,6 +382,7 @@
                 <p><strong>Your Bid:</strong> <span style="color:var(--primary); font-weight:bold;">$${bid.amount}</span></p>
                 <p><strong>Status:</strong> <span class="badge ${bid.status === 'ACCEPTED' ? 'btn-success' : (bid.status === 'REJECTED' ? 'btn-danger' : '')}" style="color:black;">${bid.status || 'PENDING'}</span></p>
                 ${sellerId ? `<button onclick="jumpToChat('${sellerId}', '${sellerName}')" style="background-color: #6b7280; margin-top: 10px; padding: 6px;">💬 Message Seller</button>` : ''}
+                ${bid.status === 'ACCEPTED' ? `<button onclick="buyNow('${bid.listingId}', '${bid.amount}')" style="background-color: #10b981; margin-top: 5px; padding: 8px; font-weight: bold;">Buy Now (Escrow)</button>` : ''}
             `;
             container.appendChild(card);
         });
@@ -479,6 +509,7 @@
             alert('Payment secured in Escrow!');
             fetchMarketplace();
             fetchTransactions();
+            getMyBids();
         }
     }
 

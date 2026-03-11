@@ -105,3 +105,30 @@ export const getMe = async (req: any, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Error fetching user data' });
   }
 };
+
+export const updateProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user.userId;
+    const { name, ghanaCardNumber } = req.body;
+
+    const data: any = {};
+    if (name) data.name = name;
+    if (ghanaCardNumber) {
+      data.ghanaCardNumber = ghanaCardNumber;
+      // In a real app we would call a 3rd party API to verify the card.
+      // For this MVP, simply providing a card number artificially verifies them.
+      data.isVerified = true; 
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data,
+      select: { id: true, email: true, name: true, role: true, isVerified: true, createdAt: true }
+    });
+
+    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ message: 'Error updating profile' });
+  }
+};
