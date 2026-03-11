@@ -1,131 +1,174 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Users, AlertTriangle, ShieldCheck, DollarSign } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Users, AlertTriangle, ShieldCheck, DollarSign, ShoppingBag, Flag, ArrowRight, RefreshCw } from 'lucide-react';
 
-export default function AdminDashboardOverview() {
-  const [stats, setStats] = useState({ users: 0, pendingIds: 0, disputes: 0, escrowVolume: 0 });
+interface Stats {
+  totalUsers: number;
+  pendingVerifications: number;
+  activeDisputes: number;
+  openReports: number;
+  totalListings: number;
+}
+
+export default function AdminDashboard() {
+  const router = useRouter();
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Note: We simulate fetching global stats here because building a complex /stats backend
-  // was not requested in Phase 6, but we can aggregate basic data for the MVP placeholder.
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const token = localStorage.getItem('admin_token');
-        const headers = { Authorization: `Bearer ${token}` };
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const res = await fetch('http://localhost:5000/api/admin/stats', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) setStats(await res.json());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
-        // We fetch the data independently and aggregate it
-        const [usersRes, dispRes] = await Promise.all([
-          fetch('http://localhost:5000/api/admin/users', { headers }),
-          fetch('http://localhost:5000/api/admin/transactions/disputes', { headers })
-        ]);
+  useEffect(() => { fetchStats(); }, []);
 
-        if (usersRes.ok && dispRes.ok) {
-            const users = await usersRes.json();
-            const disputes = await dispRes.json();
-            
-            setStats({
-                users: users.length,
-                pendingIds: users.filter((u: any) => u.ghanaCardImageUrl && !u.isVerified).length,
-                disputes: disputes.length,
-                escrowVolume: disputes.reduce((sum: number, tx: any) => sum + (tx.amount || 0), 0) // rough estimate
-            });
-        }
-      } catch (error) {
-        console.error("Error loading stats", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  const handleRefresh = () => {
+    setRefreshing(true);
     fetchStats();
-  }, []);
+  };
+
+  const statCards = stats ? [
+    {
+      label: 'Total Users',
+      value: stats.totalUsers,
+      icon: Users,
+      color: 'bg-blue-50 text-blue-600',
+      action: () => router.push('/admin-portal/users'),
+      actionLabel: 'Manage Users',
+    },
+    {
+      label: 'Total Listings',
+      value: stats.totalListings,
+      icon: ShoppingBag,
+      color: 'bg-purple-50 text-purple-600',
+      action: () => router.push('/admin-portal/listings'),
+      actionLabel: 'View Listings',
+    },
+    {
+      label: 'Pending ID Reviews',
+      value: stats.pendingVerifications,
+      icon: ShieldCheck,
+      color: 'bg-yellow-50 text-yellow-600',
+      action: () => router.push('/admin-portal/verifications'),
+      actionLabel: 'Review IDs',
+      alert: stats.pendingVerifications > 0,
+    },
+    {
+      label: 'Active Disputes',
+      value: stats.activeDisputes,
+      icon: DollarSign,
+      color: 'bg-red-50 text-red-600',
+      action: () => router.push('/admin-portal/disputes'),
+      actionLabel: 'Resolve Disputes',
+      alert: stats.activeDisputes > 0,
+    },
+    {
+      label: 'Open Reports',
+      value: stats.openReports,
+      icon: Flag,
+      color: 'bg-orange-50 text-orange-600',
+      action: () => router.push('/admin-portal/reports'),
+      actionLabel: 'View Reports',
+      alert: stats.openReports > 0,
+    },
+  ] : [];
 
   return (
-    <div className="space-y-6">
-      
-      <div className="flex justify-between items-center mb-8">
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
         <div>
-            <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-purple-600 inline-block pb-1">Platform Overview</h1>
-            <p className="text-gray-500 mt-2">Welcome back, SuperAdmin. Here is what is happening today.</p>
+          <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-purple-600 inline-block pb-1">
+            Platform Overview
+          </h1>
+          <p className="text-gray-500 mt-2">Live system metrics and quick-action shortcuts.</p>
         </div>
+        <button
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-xl font-semibold text-sm shadow disabled:opacity-60"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          <span>Refresh</span>
+        </button>
       </div>
 
       {loading ? (
-          <div className="animate-pulse flex space-x-4"><div className="rounded-xl bg-purple-100 h-32 w-full"></div></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-white rounded-2xl h-40 border border-gray-100 shadow-sm" />
+          ))}
+        </div>
       ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* Stat Card 1 */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all group">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-1">Total Users</p>
-                  <h3 className="text-3xl font-black text-gray-900">{stats.users}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {statCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.label}
+                className={`bg-white rounded-2xl shadow-sm border ${card.alert ? 'border-orange-200' : 'border-gray-100'} p-6 flex flex-col justify-between`}
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{card.label}</p>
+                    <h3 className={`text-4xl font-black ${card.alert ? 'text-red-600' : 'text-gray-900'}`}>
+                      {card.value}
+                    </h3>
+                    {card.alert && (
+                      <span className="flex items-center text-xs text-orange-600 font-semibold mt-1">
+                        <AlertTriangle className="w-3 h-3 mr-1" /> Needs attention
+                      </span>
+                    )}
+                  </div>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${card.color}`}>
+                    <Icon className="w-6 h-6" />
+                  </div>
                 </div>
-                <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                  <Users className="w-6 h-6" />
-                </div>
+                <button
+                  onClick={card.action}
+                  className="mt-6 flex items-center justify-between w-full px-4 py-2.5 bg-gray-50 hover:bg-purple-50 rounded-xl text-sm font-semibold text-gray-700 hover:text-purple-700 transition-colors"
+                >
+                  {card.actionLabel}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
-            </div>
-
-            {/* Stat Card 2 */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all group">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-1">Pending IDs</p>
-                  <h3 className="text-3xl font-black text-gray-900">{stats.pendingIds}</h3>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-              </div>
-              {stats.pendingIds > 0 && <p className="text-xs text-yellow-600 mt-4 font-medium flex items-center">Requires attention &rarr;</p>}
-            </div>
-
-            {/* Stat Card 3 */}
-            <div className="bg-white rounded-xl shadow-sm border border-red-50 p-6 transition-all group">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-red-400 uppercase tracking-widest mb-1 shadow-sm">Active Disputes</p>
-                  <h3 className="text-3xl font-black text-red-600">{stats.disputes}</h3>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-red-600 group-hover:bg-red-600 group-hover:text-white transition-colors">
-                  <AlertTriangle className="w-6 h-6" />
-                </div>
-              </div>
-              {stats.disputes > 0 && <p className="text-xs text-red-500 mt-4 font-bold">Escrow funds frozen</p>}
-            </div>
-
-            {/* Stat Card 4 */}
-            <div className="relative bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl shadow-lg p-6 overflow-hidden group">
-              {/* Internal abstract shapes */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
-              
-              <div className="relative flex justify-between items-start z-10">
-                <div>
-                  <p className="text-sm font-medium text-purple-200 uppercase tracking-widest mb-1">Vol in Dispute</p>
-                  <h3 className="text-3xl font-black text-white">${stats.escrowVolume.toFixed(2)}</h3>
-                </div>
-                <div className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-white">
-                  <DollarSign className="w-6 h-6" />
-                </div>
-              </div>
-            </div>
-
-          </div>
+            );
+          })}
+        </div>
       )}
 
-      {/* Decorative Empty State Feed */}
-      <div className="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiLz48cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjZjNmM2Y0Ii8+PC9zdmc+')]">
-         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-dashed border-gray-200">
-            <ShieldCheck className="w-8 h-8 text-gray-400" />
-         </div>
-         <h3 className="text-lg font-bold text-gray-900">Activity Feed Online</h3>
-         <p className="text-gray-500 mt-1 max-w-sm mx-auto">All systems operational. Navigate using the sidebar to begin moderating StudentMarket.</p>
+      {/* Quick Actions */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'View All Sellers', action: () => router.push('/admin-portal/users?role=SELLER') },
+            { label: 'View All Buyers', action: () => router.push('/admin-portal/users?role=BUYER') },
+            { label: 'Open ID Queue', action: () => router.push('/admin-portal/verifications') },
+            { label: 'Manage Admins', action: () => router.push('/admin-portal/settings') },
+          ].map((btn) => (
+            <button
+              key={btn.label}
+              onClick={btn.action}
+              className="py-3 px-4 bg-purple-600 text-white rounded-xl text-sm font-bold shadow-sm text-center"
+            >
+              {btn.label}
+            </button>
+          ))}
+        </div>
       </div>
-
     </div>
   );
 }

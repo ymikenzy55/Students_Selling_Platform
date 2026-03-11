@@ -26,6 +26,8 @@ model User {
   messagesSent    Message[] @relation("Sender")
   messagesReceived Message[] @relation("Receiver")
   transactions    Transaction[]
+  reports         Report[]  @relation("UserReports")
+  reviews         Review[]  @relation("UserReviews")
   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -92,6 +94,35 @@ model Transaction {
   
   buyerId     String
   buyer       User     @relation(fields: [buyerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  subject     String
+  description String
+  category    String   @default("GENERAL") // GENERAL, LISTING, USER, TRANSACTION
+  status      String   @default("OPEN")    // OPEN, IN_REVIEW, RESOLVED
+  
+  reporterId  String
+  reporter    User     @relation("UserReports", fields: [reporterId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  rating      Int      @default(5) // 1-5 stars
+  title       String
+  body        String
+  type        String   @default("PLATFORM") // PLATFORM, SELLER, LISTING
+  status      String   @default("PENDING")  // PENDING, PUBLISHED, HIDDEN
+  
+  authorId    String
+  author      User     @relation("UserReviews", fields: [authorId], references: [id])
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
