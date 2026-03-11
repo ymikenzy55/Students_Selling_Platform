@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Market API Tester</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; max-width: 800px; margin: auto; background-color: #f9fafb; color: #111827; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; border: 1px solid #e5e7eb; }
+        h1 { color: #6d28d9; }
+        h2 { border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; font-size: 1.25rem; }
+        input, select, button { display: block; width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        button { background-color: #6d28d9; color: white; cursor: pointer; font-weight: bold; border: none; }
+        button:hover { background-color: #5b21b6; }
+        pre { background: #1f2937; color: #10b981; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 0.875rem; }
+        .flex { display: flex; gap: 10px; }
+        .flex button { flex: 1; }
+        .status { padding: 10px; border-radius: 6px; font-weight: bold; text-align: center; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>API Testing Interface (Not synced to GitHub)</h1>
+    <p>Use this interface to easily send requests directly to the local backend without waiting for the frontend developer.</p>
+
+    <!-- AUTHENTICATION -->
+    <div class="card">
+        <h2>1. Authentication</h2>
+        <input type="text" id="name" placeholder="Full Name (For Registration only)" value="Test User">
+        <input type="email" id="email" placeholder="Email (e.g., test@example.com)" value="test@example.com">
+        <input type="password" id="password" placeholder="Password" value="password123">
+        <div class="flex">
+            <button onclick="login()">Login</button>
+            <button onclick="register()" style="background-color: #10b981;">Register</button>
+        </div>
+        <p><strong>Current Token:</strong> <span id="token-display" style="word-break: break-all; color: #6d28d9;">Not logged in</span></p>
+    </div>
+
+    <!-- LISTINGS -->
+    <div class="card">
+        <h2>2. Listings API</h2>
+        <div class="flex">
+            <button onclick="getAllListings()">GET /api/listings</button>
+        </div>
+        <h3>Create Test Listing</h3>
+        <input type="text" id="title" placeholder="Listing Title" value="Used iPhone 13">
+        <input type="number" id="price" placeholder="Price" value="500">
+        <button onclick="createListing()" style="background-color: #059669;">POST /api/listings</button>
+    </div>
+
+    <!-- BIDDING -->
+    <div class="card">
+        <h2>3. Bidding API</h2>
+        <input type="text" id="listingId" placeholder="Paste a Listing ID from above here...">
+        <input type="number" id="bidAmount" placeholder="Bid Amount ($)" value="450">
+        <div class="flex">
+             <button onclick="placeBid()" style="background-color: #2563eb;">Place Bid</button>
+             <button onclick="getMyBids()" style="background-color: #4b5563;">See My Bids</button>
+        </div>
+
+        <h3>Accept/Reject Bid (Seller Only)</h3>
+        <input type="text" id="bidId" placeholder="Paste a Bid ID from above here...">
+        <select id="bidStatus">
+            <option value="ACCEPTED">ACCEPTED</option>
+            <option value="REJECTED">REJECTED</option>
+        </select>
+        <button onclick="updateBid()" style="background-color: #d97706;">Update Bid Status</button>
+    </div>
+
+    <!-- CONSOLE / OUTPUT -->
+    <div class="card">
+        <h2>Console Output</h2>
+        <pre id="output">Run a command to see the API response here...</pre>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        let token = localStorage.getItem('test_api_token') || '';
+
+        if (token) document.getElementById('token-display').innerText = 'Token Saved in LocalStorage!';
+
+        function logOutput(data) {
+            document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchAPI(endpoint, method = 'GET', body = null) {
+            try {
+                const headers = { 'Content-Type': 'application/json' };
+                if (token) headers['Authorization'] = `Bearer ${token}`;
+
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method,
+                    headers,
+                    body: body ? JSON.stringify(body) : null
+                });
+
+                const data = await response.json();
+                logOutput(data);
+                return data;
+            } catch (err) {
+                logOutput({ error: err.message });
+            }
+        }
+
+        // Auth
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const data = await fetchAPI('/auth/login', 'POST', { email, password });
+            if (data && data.token) {
+                token = data.token;
+                localStorage.setItem('test_api_token', token);
+                document.getElementById('token-display').innerText = 'Token Saved in LocalStorage!';
+            }
+        }
+        
+        async function register() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const data = await fetchAPI('/auth/register', 'POST', { name, email, password, role: 'BUYER' });
+            if (data && data.token) {
+                token = data.token;
+                localStorage.setItem('test_api_token', token);
+                document.getElementById('token-display').innerText = 'Registered & Token Saved!';
+            }
+        }
+
+        // Listings
+        async function getAllListings() { await fetchAPI('/listings'); }
+        async function createListing() {
+            const title = document.getElementById('title').value;
+            const price = document.getElementById('price').value;
+            await fetchAPI('/listings', 'POST', {
+                title, description: 'Created from Test UI', price, condition: 'USED_GOOD', category: 'ELECTRONICS', campus: 'Main'
+            });
+        }
+
+        // Bids
+        async function placeBid() {
+            const listingId = document.getElementById('listingId').value;
+            const amount = document.getElementById('bidAmount').value;
+            await fetchAPI('/bids', 'POST', { listingId, amount });
+        }
+        
+        async function getMyBids() {
+            await fetchAPI('/bids/user');
+        }
+
+        async function updateBid() {
+            const bidId = document.getElementById('bidId').value;
+            const status = document.getElementById('bidStatus').value;
+            await fetchAPI(`/bids/${bidId}/status`, 'PUT', { status });
+        }
+    </script>
+</body>
+</html>
