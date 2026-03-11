@@ -53,18 +53,18 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center p-4">
       {/* Decorative Background Elements */}
       <div 
-        className="absolute top-0 right-0 w-1/3 h-1/2 bg-primary/5 rounded-bl-[100px] -z-10"
+        className="absolute top-0 right-0 w-1/3 h-1/2 bg-purple-600/5 rounded-bl-[100px] -z-10"
         style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 0)' }}
       ></div>
       <div 
-        className="absolute bottom-0 left-0 w-1/2 h-1/3 bg-primary/10 rounded-tr-[150px] -z-10"
+        className="absolute bottom-0 left-0 w-1/2 h-1/3 bg-purple-600/10 rounded-tr-[150px] -z-10"
         style={{ clipPath: 'polygon(0 100%, 100% 100%, 0 0)' }}
       ></div>
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 hover-glOW">
         
         {/* Top Header Banner */}
-        <div className="bg-primary px-8 py-10 text-center relative overflow-hidden">
+        <div className="bg-purple-600 px-8 py-10 text-center relative overflow-hidden">
           {/* Internal Slash Accents for the Banner */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-white" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%, 0% 100%)', transform: 'rotate(25deg)' }}></div>
@@ -73,7 +73,7 @@ export default function AdminLogin() {
 
           <div className="relative z-10 flex flex-col items-center">
             <div className="w-16 h-16 bg-white rounded-xl shadow-lg flex items-center justify-center mb-4 transform -rotate-3 hover:rotate-0 transition-transform">
-              <Lock className="w-8 h-8 text-primary" />
+              <Lock className="w-8 h-8 text-purple-600" />
             </div>
             <h1 className="text-2xl font-black text-white tracking-widest uppercase">Admin Portal</h1>
             <p className="text-purple-200 mt-2 text-sm font-medium">Restricted Access Zone</p>
@@ -98,7 +98,7 @@ export default function AdminLogin() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all outline-none"
                 placeholder="admin@studentmarket.com"
               />
             </div>
@@ -113,7 +113,7 @@ export default function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all outline-none"
                   placeholder="••••••••"
                 />
                 <button
@@ -129,7 +129,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-purple-200 transform hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-75 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-lg shadow-lg shadow-purple-200 transform hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 disabled:opacity-75 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">

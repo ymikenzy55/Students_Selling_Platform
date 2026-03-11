@@ -47,7 +47,7 @@ export default function AdminDashboardOverview() {
       
       <div className="flex justify-between items-center mb-8">
         <div>
-            <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-primary inline-block pb-1">Platform Overview</h1>
+            <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-purple-600 inline-block pb-1">Platform Overview</h1>
             <p className="text-gray-500 mt-2">Welcome back, SuperAdmin. Here is what is happening today.</p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default function AdminDashboardOverview() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             {/* Stat Card 1 */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover-glOW transition-all group">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all group">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-1">Total Users</p>
@@ -71,7 +71,7 @@ export default function AdminDashboardOverview() {
             </div>
 
             {/* Stat Card 2 */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover-glOW transition-all group">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all group">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-medium text-gray-500 uppercase tracking-widest mb-1">Pending IDs</p>
@@ -85,7 +85,7 @@ export default function AdminDashboardOverview() {
             </div>
 
             {/* Stat Card 3 */}
-            <div className="bg-white rounded-xl shadow-sm border border-red-50 p-6 hover-glOW transition-all group">
+            <div className="bg-white rounded-xl shadow-sm border border-red-50 p-6 transition-all group">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-sm font-medium text-red-400 uppercase tracking-widest mb-1 shadow-sm">Active Disputes</p>
@@ -99,7 +99,7 @@ export default function AdminDashboardOverview() {
             </div>
 
             {/* Stat Card 4 */}
-            <div className="relative bg-gradient-to-br from-primary to-purple-800 rounded-xl shadow-lg p-6 hover:-translate-y-1 transition-transform overflow-hidden group">
+            <div className="relative bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl shadow-lg p-6 overflow-hidden group">
               {/* Internal abstract shapes */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
               

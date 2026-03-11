@@ -118,14 +118,14 @@ export default function IDVerifications() {
                     <div className="mt-6 flex space-x-4 border-t border-gray-100 pt-6">
                         <button 
                             onClick={() => handleVerify(user.id, true)}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center transition-colors shadow-sm"
+                            className="flex-1 bg-purple-600 text-white font-bold py-3 rounded-lg flex items-center justify-center shadow-sm"
                         >
                             <CheckCircle className="w-5 h-5 mr-2" />
                             Approve Identity
                         </button>
                         <button 
                             onClick={() => handleVerify(user.id, false)} // Or delete document reference here
-                            className="flex-1 bg-red-50 hover:bg-red-100 text-red-700 font-bold py-3 rounded-lg flex items-center justify-center transition-colors border border-red-200"
+                            className="flex-1 bg-purple-600 text-white font-bold py-3 rounded-lg flex items-center justify-center shadow-sm"
                         >
                             <XCircle className="w-5 h-5 mr-2" />
                             Reject / Request Re-load

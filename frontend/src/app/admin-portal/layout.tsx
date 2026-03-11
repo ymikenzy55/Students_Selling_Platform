@@ -63,11 +63,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   };
 
   const navLinks = [
-    { name: 'Dashboard', path: '/admin-portal' },
-    { name: 'User Management', path: '/admin-portal/users' },
-    { name: 'ID Verifications', path: '/admin-portal/verifications' },
-    { name: 'Escrow Disputes', path: '/admin-portal/disputes' },
-    { name: 'Manage Admins', path: '/admin-portal/settings' }
+    { name: 'Dashboard', path: '/admin-portal', icon: '📊' },
+    { name: 'User Management', path: '/admin-portal/users', icon: '👥' },
+    { name: 'All Listings', path: '/admin-portal/listings', icon: '🛍️' },
+    { name: 'ID Verifications', path: '/admin-portal/verifications', icon: '🆔' },
+    { name: 'Escrow Disputes', path: '/admin-portal/disputes', icon: '⚖️' },
+    { name: 'Manage Admins', path: '/admin-portal/settings', icon: '⚙️' }
   ];
 
   return (
@@ -95,8 +96,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {/* Polygon slash logo design */}
             <div className="relative font-black text-2xl tracking-tighter">
                 <span className="text-gray-900">STUDENT</span>
-                <span className="text-primary hidden">MARKET</span>
-                <span className="text-primary absolute -right-20 italic" style={{clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)', background: '#6d28d9', color: 'white', padding: '0 8px'}}>ADMIN</span>
+                <span className="text-purple-600 hidden">MARKET</span>
+                <span className="text-white absolute -right-20 italic" style={{clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)', background: '#9333ea', padding: '0 8px'}}>ADMIN</span>
             </div>
           </div>
 
@@ -108,13 +109,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   key={link.path} 
                   href={link.path}
                   className={`
-                    flex items-center px-4 py-3 rounded-lg transition-all duration-200
+                    flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 border-l-4
                     ${isActive 
-                      ? 'bg-primary text-white font-medium shadow-md' 
-                      : 'text-gray-600 hover:bg-purple-50 hover:text-primary'}
+                      ? 'bg-purple-600 text-white font-bold shadow-md border-purple-800' 
+                      : 'text-gray-600 bg-white hover:bg-gray-50 border-transparent'}
                   `}
                 >
-                  {link.name}
+                  <span className="text-xl">{link.icon}</span>
+                  <span>{link.name}</span>
                 </Link>
               );
             })}
@@ -123,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="p-4 border-t border-gray-100">
             <button 
               onClick={handleLogout}
-              className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium flex items-center"
+              className="w-full text-left px-4 py-3 text-red-600 font-bold bg-white hover:bg-gray-50 rounded-lg transition-colors flex items-center"
             >
               Sign Out Securely
             </button>
@@ -146,7 +148,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             <div className="flex items-center space-x-4">
               <span className="hidden sm:block text-sm font-medium text-gray-500">Global Overseer</span>
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold shadow-md ring-2 ring-purple-100">
+              <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold shadow-md ring-2 ring-purple-100">
                 GO
               </div>
             </div>

@@ -63,7 +63,7 @@ export default function AdminSettings() {
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div>
-            <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-primary inline-block pb-1">Platform Settings</h1>
+            <h1 className="text-3xl font-bold text-gray-900 border-b-4 border-purple-600 inline-block pb-1">Platform Settings</h1>
             <p className="text-gray-500 mt-2">Manage overarching platform configuration and access control.</p>
         </div>
       </div>
@@ -77,11 +77,11 @@ export default function AdminSettings() {
       ) : (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
               {/* Decorative edge */}
-              <div className="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-primary to-purple-400"></div>
+              <div className="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-purple-600 to-purple-400"></div>
 
               <div className="p-8">
                   <div className="flex items-center space-x-4 mb-6 border-b border-gray-100 pb-4">
-                      <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-primary">
+                      <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
                           <Shield className="w-6 h-6" />
                       </div>
                       <div>
@@ -102,7 +102,7 @@ export default function AdminSettings() {
                               <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
                               <input 
                                   type="text" required value={name} onChange={e => setName(e.target.value)}
-                                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary outline-none"
+                                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none"
                                   placeholder="Moderator Name"
                               />
                           </div>
@@ -110,7 +110,7 @@ export default function AdminSettings() {
                               <label className="block text-sm font-semibold text-gray-700 mb-2">Admin Email</label>
                               <input 
                                   type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary outline-none"
+                                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none"
                                   placeholder="admin@studentmarket.com"
                               />
                           </div>
@@ -120,7 +120,7 @@ export default function AdminSettings() {
                           <label className="block text-sm font-semibold text-gray-700 mb-2">Temporary Password</label>
                           <input 
                               type="password" required value={password} onChange={e => setPassword(e.target.value)}
-                              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-primary outline-none"
+                              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-purple-600 outline-none"
                               placeholder="••••••••"
                           />
                           <p className="text-xs text-gray-400 mt-2">The new administrator should change this password immediately upon their first login.</p>
@@ -128,7 +128,7 @@ export default function AdminSettings() {
 
                       <button 
                           type="submit" disabled={isSubmitting}
-                          className="w-full md:w-auto px-8 bg-primary hover:bg-purple-700 text-white font-bold py-3.5 rounded-lg shadow-md flex items-center justify-center transition-colors disabled:opacity-75 focus:ring-2 focus:ring-offset-2 focus:ring-primary ml-auto"
+                          className="w-full md:w-auto px-8 bg-purple-600 text-white font-bold py-3.5 rounded-lg shadow-md flex items-center justify-center disabled:opacity-75 focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 ml-auto"
                       >
                           {isSubmitting ? 'Provisioning...' : <><Plus className="w-5 h-5 mr-2" /> Provision Admin</>}
                       </button>

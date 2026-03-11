@@ -112,14 +112,14 @@ export default function EscrowDisputes() {
                     <div className="border-t border-gray-100 pt-6 flex flex-col sm:flex-row gap-4">
                         <button 
                             onClick={() => resolveDispute(tx.id, 'REFUND_BUYER')}
-                            className="flex-1 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 font-bold py-3 rounded-lg flex items-center justify-center transition-colors border border-red-200 hover:border-transparent shadow-sm"
+                            className="flex-1 bg-purple-600 text-white font-bold py-3 rounded-lg flex items-center justify-center shadow-sm"
                         >
                             <ArrowLeftRight className="w-5 h-5 mr-2" />
                             Force Refund to Buyer
                         </button>
                         <button 
                             onClick={() => resolveDispute(tx.id, 'RELEASE_TO_SELLER')}
-                            className="flex-1 bg-green-50 hover:bg-green-600 hover:text-white text-green-700 font-bold py-3 rounded-lg flex items-center justify-center transition-colors border border-green-200 hover:border-transparent shadow-sm"
+                            className="flex-1 bg-purple-600 text-white font-bold py-3 rounded-lg flex items-center justify-center shadow-sm"
                         >
                             <CreditCard className="w-5 h-5 mr-2" />
                             Force Payout to Seller
