@@ -25,3 +25,31 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
     res.status(403).json({ message: 'Invalid or expired token' });
   }
 };
+
+export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+  
+  if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPER_ADMIN') {
+    res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    return;
+  }
+  
+  next();
+};
+
+export const isSuperAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+  
+  if (req.user.role !== 'SUPER_ADMIN') {
+    res.status(403).json({ message: 'Access denied. SuperAdmin privileges required.' });
+    return;
+  }
+  
+  next();
+};

@@ -86,7 +86,29 @@
             <h3>Post a New Item</h3>
             <input type="text" id="newTitle" placeholder="Item Title (e.g., Mac Desktop)">
             <input type="number" id="newPrice" placeholder="Price ($)">
-            <button onclick="createListing()" class="btn-success">Submit Listing</button>
+            <input type="text" id="newDescription" placeholder="Description (Optional)">
+            <div class="grid">
+                <select id="newCategory">
+                    <option value="ELECTRONICS">Electronics</option>
+                    <option value="BOOKS">Books & Materials</option>
+                    <option value="FURNITURE">Furniture</option>
+                    <option value="CLOTHING">Clothing</option>
+                    <option value="SERVICES">Services</option>
+                    <option value="OTHER">Other</option>
+                </select>
+                <select id="newCondition">
+                    <option value="NEW">Brand New</option>
+                    <option value="USED_LIKE_NEW">Used - Like New</option>
+                    <option value="USED_GOOD">Used - Good</option>
+                    <option value="USED_FAIR">Used - Fair</option>
+                </select>
+                <select id="newCampus">
+                    <option value="Main Campus">Main Campus</option>
+                    <option value="North Campus">North Campus</option>
+                    <option value="South Campus">South Campus</option>
+                </select>
+            </div>
+            <button onclick="createListing()" class="btn-success" style="margin-top: 15px;">Submit Listing</button>
             
             <hr>
             <hr>
@@ -350,8 +372,12 @@
             }
 
             card.innerHTML = `
-                <h4>${item.title}</h4>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <h4>${item.title}</h4>
+                    <span class="badge" style="background:var(--primary); color:white;">${item.category}</span>
+                </div>
                 <p style="margin: 0; font-size: 1.25rem; font-weight: bold; color: var(--primary);">$${item.price}</p>
+                <p style="margin: 5px 0; font-size: 0.85rem; color: #6b7280;">Condition: <b>${item.condition.replace(/_/g, ' ')}</b> • Campus: <b>${item.campus}</b></p>
                 <p style="margin: 5px 0; font-size: 0.85rem; color: #6b7280;">Seller: ${item.seller.name}</p>
                 <p style="margin: 5px 0; font-size: 0.85rem;">ID: <code style="background:#eee;padding:2px;border-radius:3px;">${item.id}</code></p>
                 ${actionHtml}
@@ -361,13 +387,19 @@
     }
 
     async function createListing() {
+        const title = document.getElementById('newTitle').value;
+        const price = document.getElementById('newPrice').value;
+        const desc = document.getElementById('newDescription').value;
+        
+        if(!title || !price) return alert('Title and Price are required.');
+
         await api('/listings', 'POST', {
-            title: document.getElementById('newTitle').value,
-            description: "No desc",
-            price: document.getElementById('newPrice').value,
-            condition: "USED_GOOD",
-            category: "ELECTRONICS",
-            campus: "Main"
+            title,
+            description: desc || "No description provided",
+            price: parseFloat(price),
+            condition: document.getElementById('newCondition').value,
+            category: document.getElementById('newCategory').value,
+            campus: document.getElementById('newCampus').value
         });
         fetchMarketplace(); // Auto refresh
     }
