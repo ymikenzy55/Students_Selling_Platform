@@ -5,153 +5,338 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Market API Tester</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; max-width: 800px; margin: auto; background-color: #f9fafb; color: #111827; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 20px; border: 1px solid #e5e7eb; }
-        h1 { color: #6d28d9; }
-        h2 { border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; font-size: 1.25rem; }
-        input, select, button { display: block; width: 100%; margin: 10px 0; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
-        button { background-color: #6d28d9; color: white; cursor: pointer; font-weight: bold; border: none; }
-        button:hover { background-color: #5b21b6; }
-        pre { background: #1f2937; color: #10b981; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 0.875rem; }
+        :root { --primary: #6d28d9; --success: #10b981; --bg: #f3f4f6; --danger: #ef4444; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #1f2937; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1, h2, h3 { color: var(--primary); margin-top: 0; }
+        input, select, button { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
+        button { background-color: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        .btn-success { background-color: var(--success); }
+        .btn-danger { background-color: var(--danger); }
+        .btn-secondary { background-color: #6b7280; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .listing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .listing-card { border: 1px solid #e5e7eb; padding: 15px; border-radius: 8px; background: #f9fafb; display: flex; flex-direction: column; }
+        .listing-card h4 { margin: 0 0 10px 0; font-size: 1.1rem; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; background: #e0e7ff; color: #4338ca; }
+        pre { background: #1e293b; color: #34d399; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 0.85rem; max-height: 300px; }
+        .hidden { display: none; }
         .flex { display: flex; gap: 10px; }
-        .flex button { flex: 1; }
-        .status { padding: 10px; border-radius: 6px; font-weight: bold; text-align: center; display: none; margin-top: 10px; }
+        .flex > * { flex: 1; }
     </style>
 </head>
 <body>
 
-    <h1>API Testing Interface (Not synced to GitHub)</h1>
-    <p>Use this interface to easily send requests directly to the local backend without waiting for the frontend developer.</p>
-
-    <!-- AUTHENTICATION -->
-    <div class="card">
-        <h2>1. Authentication</h2>
-        <input type="text" id="name" placeholder="Full Name (For Registration only)" value="Test User">
-        <input type="email" id="email" placeholder="Email (e.g., test@example.com)" value="test@example.com">
-        <input type="password" id="password" placeholder="Password" value="password123">
-        <div class="flex">
-            <button onclick="login()">Login</button>
-            <button onclick="register()" style="background-color: #10b981;">Register</button>
+<div class="container">
+    <div class="header">
+        <div>
+            <h1>Student Market Tester</h1>
+            <p id="user-status">Not logged in</p>
         </div>
-        <p><strong>Current Token:</strong> <span id="token-display" style="word-break: break-all; color: #6d28d9;">Not logged in</span></p>
+        <div>
+            <button id="logoutBtn" class="btn-danger hidden" onclick="logout()" style="width: auto; padding: 10px 20px;">Logout</button>
+        </div>
     </div>
 
-    <!-- LISTINGS -->
-    <div class="card">
-        <h2>2. Listings API</h2>
-        <div class="flex">
-            <button onclick="getAllListings()">GET /api/listings</button>
-        </div>
-        <h3>Create Test Listing</h3>
-        <input type="text" id="title" placeholder="Listing Title" value="Used iPhone 13">
-        <input type="number" id="price" placeholder="Price" value="500">
-        <button onclick="createListing()" style="background-color: #059669;">POST /api/listings</button>
-    </div>
+    <div class="grid">
+        <!-- AUTH SECTION -->
+        <div class="card" id="authSection">
+            <h2>Authentication</h2>
+            
+            <div style="border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px;">
+                <h3>Login</h3>
+                <input type="email" id="loginEmail" placeholder="Email (e.g., test@example.com)" value="test@example.com">
+                <input type="password" id="loginPassword" placeholder="Password" value="password123">
+                <button onclick="login()">Login</button>
+            </div>
 
-    <!-- BIDDING -->
-    <div class="card">
-        <h2>3. Bidding API</h2>
-        <input type="text" id="listingId" placeholder="Paste a Listing ID from above here...">
-        <input type="number" id="bidAmount" placeholder="Bid Amount ($)" value="450">
-        <div class="flex">
-             <button onclick="placeBid()" style="background-color: #2563eb;">Place Bid</button>
-             <button onclick="getMyBids()" style="background-color: #4b5563;">See My Bids</button>
+            <div>
+                <h3>Register New User</h3>
+                <input type="text" id="regName" placeholder="Full Name">
+                <input type="email" id="regEmail" placeholder="New Email">
+                <input type="password" id="regPassword" placeholder="Password">
+                <select id="regRole">
+                    <option value="BUYER">BUYER</option>
+                    <option value="SELLER">SELLER</option>
+                </select>
+                <button onclick="register()" class="btn-success">Register</button>
+            </div>
         </div>
 
-        <h3>Accept/Reject Bid (Seller Only)</h3>
-        <input type="text" id="bidId" placeholder="Paste a Bid ID from above here...">
-        <select id="bidStatus">
-            <option value="ACCEPTED">ACCEPTED</option>
-            <option value="REJECTED">REJECTED</option>
-        </select>
-        <button onclick="updateBid()" style="background-color: #d97706;">Update Bid Status</button>
+        <!-- SELLER CONTROLS -->
+        <div class="card hidden" id="sellerSection">
+            <h2>Seller Dashboard</h2>
+            <h3>Post a New Item</h3>
+            <input type="text" id="newTitle" placeholder="Item Title (e.g., Mac Desktop)">
+            <input type="number" id="newPrice" placeholder="Price ($)">
+            <button onclick="createListing()" class="btn-success">Submit Listing</button>
+            
+            <hr>
+            <hr>
+            <h3>Manage Bids on Your Items</h3>
+            <button onclick="getSellerBids()" class="btn-secondary">Fetch Incoming Bids</button>
+            <div id="sellerBidsContainer" class="listing-grid"></div>
+        </div>
+
+        <!-- BUYER CONTROLS -->
+        <div class="card hidden" id="buyerSection">
+            <h2>Buyer Dashboard</h2>
+            <h3>My Active Bids</h3>
+            <button onclick="getMyBids()" class="btn-secondary">Fetch My Bids</button>
+            <div id="buyerBidsContainer" class="listing-grid"></div>
+        </div>
     </div>
 
-    <!-- CONSOLE / OUTPUT -->
+    <!-- MAIN MARKETPLACE UI -->
     <div class="card">
-        <h2>Console Output</h2>
-        <pre id="output">Run a command to see the API response here...</pre>
+        <div class="flex" style="align-items: center; justify-content: space-between;">
+            <h2>Marketplace Listings</h2>
+            <button onclick="fetchMarketplace()" style="width: auto; padding: 8px 15px;">Refresh Feed</button>
+        </div>
+        <div id="listingsContainer" class="listing-grid">
+            <p>Click "Refresh Feed" to load items...</p>
+        </div>
     </div>
 
-    <script>
-        const API_BASE = 'http://localhost:5000/api';
-        let token = localStorage.getItem('test_api_token') || '';
+    <!-- CONSOLE -->
+    <div class="card">
+        <h2>API Response Console</h2>
+        <pre id="output">// Logs will appear here...</pre>
+    </div>
+</div>
 
-        if (token) document.getElementById('token-display').innerText = 'Token Saved in LocalStorage!';
+<script>
+    const API_BASE = 'http://localhost:5000/api';
+    let currentUser = null;
+    let currentToken = null;
 
-        function logOutput(data) {
-            document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-        }
+    // ----- UTILS -----
+    function log(data) {
+        document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+    }
 
-        async function fetchAPI(endpoint, method = 'GET', body = null) {
-            try {
-                const headers = { 'Content-Type': 'application/json' };
-                if (token) headers['Authorization'] = `Bearer ${token}`;
+    async function api(endpoint, method = 'GET', body = null) {
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
 
-                const response = await fetch(`${API_BASE}${endpoint}`, {
-                    method,
-                    headers,
-                    body: body ? JSON.stringify(body) : null
-                });
-
-                const data = await response.json();
-                logOutput(data);
-                return data;
-            } catch (err) {
-                logOutput({ error: err.message });
-            }
-        }
-
-        // Auth
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const data = await fetchAPI('/auth/login', 'POST', { email, password });
-            if (data && data.token) {
-                token = data.token;
-                localStorage.setItem('test_api_token', token);
-                document.getElementById('token-display').innerText = 'Token Saved in LocalStorage!';
-            }
-        }
-        
-        async function register() {
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const data = await fetchAPI('/auth/register', 'POST', { name, email, password, role: 'BUYER' });
-            if (data && data.token) {
-                token = data.token;
-                localStorage.setItem('test_api_token', token);
-                document.getElementById('token-display').innerText = 'Registered & Token Saved!';
-            }
-        }
-
-        // Listings
-        async function getAllListings() { await fetchAPI('/listings'); }
-        async function createListing() {
-            const title = document.getElementById('title').value;
-            const price = document.getElementById('price').value;
-            await fetchAPI('/listings', 'POST', {
-                title, description: 'Created from Test UI', price, condition: 'USED_GOOD', category: 'ELECTRONICS', campus: 'Main'
+            const res = await fetch(`${API_BASE}${endpoint}`, {
+                method, headers, body: body ? JSON.stringify(body) : null
             });
+            const data = await res.json();
+            log({ url: endpoint, status: res.status, response: data });
+            return { status: res.status, data };
+        } catch (e) {
+            log({ error: e.message });
+            return null;
+        }
+    }
+
+    function updateUI() {
+        const authSection = document.getElementById('authSection');
+        const sellerSection = document.getElementById('sellerSection');
+        const buyerSection = document.getElementById('buyerSection');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const statusText = document.getElementById('user-status');
+
+        if (currentUser) {
+            authSection.classList.add('hidden');
+            logoutBtn.classList.remove('hidden');
+            statusText.innerHTML = `Logged in as <b>${currentUser.name}</b> (<span class="badge">${currentUser.role}</span>)`;
+            
+            if (currentUser.role === 'SELLER') {
+                sellerSection.classList.remove('hidden');
+                buyerSection.classList.add('hidden');
+            } else {
+                buyerSection.classList.remove('hidden');
+                sellerSection.classList.add('hidden');
+            }
+            fetchMarketplace();
+        } else {
+            authSection.classList.remove('hidden');
+            logoutBtn.classList.add('hidden');
+            sellerSection.classList.add('hidden');
+            buyerSection.classList.add('hidden');
+            statusText.innerText = "Not logged in";
+            document.getElementById('listingsContainer').innerHTML = '<p>Log in to interact with the marketplace.</p>';
+        }
+    }
+
+    // ----- AUTH -----
+    async function login() {
+        const res = await api('/auth/login', 'POST', {
+            email: document.getElementById('loginEmail').value,
+            password: document.getElementById('loginPassword').value
+        });
+        if (res && res.status === 200) {
+            currentToken = res.data.token;
+            currentUser = res.data.user;
+            localStorage.setItem('test_token', currentToken);
+            updateUI();
+        }
+    }
+
+    async function register() {
+        const res = await api('/auth/register', 'POST', {
+            name: document.getElementById('regName').value,
+            email: document.getElementById('regEmail').value,
+            password: document.getElementById('regPassword').value,
+            role: document.getElementById('regRole').value
+        });
+        if (res && res.status === 201) {
+            currentToken = res.data.token;
+            currentUser = res.data.user;
+            localStorage.setItem('test_token', currentToken);
+            updateUI();
+        }
+    }
+
+    function logout() {
+        currentToken = null;
+        currentUser = null;
+        localStorage.removeItem('test_token');
+        updateUI();
+        log("Logged out successfully.");
+    }
+
+    // ----- INITIALIZE -----
+    async function checkSession() {
+        const savedToken = localStorage.getItem('test_token');
+        if (savedToken) {
+            currentToken = savedToken;
+            const res = await api('/auth/me'); // We need to fetch the full user object
+            if (res && res.status === 200) {
+                currentUser = res.data;
+                updateUI();
+            } else {
+                logout(); // Invalid token
+            }
+        } else {
+            updateUI();
+        }
+    }
+
+    // ----- MARKETPLACE -----
+    async function fetchMarketplace() {
+        const res = await api('/listings');
+        const container = document.getElementById('listingsContainer');
+        if (!res || res.status !== 200) {
+            container.innerHTML = `<p style="color:red;">Failed to load listings.</p>`;
+            return;
         }
 
-        // Bids
-        async function placeBid() {
-            const listingId = document.getElementById('listingId').value;
-            const amount = document.getElementById('bidAmount').value;
-            await fetchAPI('/bids', 'POST', { listingId, amount });
+        const items = res.data;
+        if (items.length === 0) {
+            container.innerHTML = '<p>No items found in the marketplace.</p>';
+            return;
         }
+
+        container.innerHTML = '';
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'listing-card';
+            
+            let actionHtml = '';
+            if (currentUser && currentUser.role === 'BUYER') {
+                actionHtml = `
+                    <div style="margin-top: auto; padding-top: 10px;">
+                        <input type="number" id="bid_${item.id}" placeholder="Your Bid $" value="${item.price}" style="margin: 5px 0;">
+                        <button onclick="placeBid('${item.id}')" style="background-color: #2563eb; padding: 8px;">Place Bid</button>
+                    </div>
+                `;
+            } else if (currentUser && currentUser.id === item.sellerId) {
+                actionHtml = `<div style="margin-top: auto; padding-top:10px;"><span class="badge" style="background: #10b981; color: white;">Your Item</span></div>`;
+            }
+
+            card.innerHTML = `
+                <h4>${item.title}</h4>
+                <p style="margin: 0; font-size: 1.25rem; font-weight: bold; color: var(--primary);">$${item.price}</p>
+                <p style="margin: 5px 0; font-size: 0.85rem; color: #6b7280;">Seller: ${item.seller.name}</p>
+                <p style="margin: 5px 0; font-size: 0.85rem;">ID: <code style="background:#eee;padding:2px;border-radius:3px;">${item.id}</code></p>
+                ${actionHtml}
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    async function createListing() {
+        await api('/listings', 'POST', {
+            title: document.getElementById('newTitle').value,
+            description: "No desc",
+            price: document.getElementById('newPrice').value,
+            condition: "USED_GOOD",
+            category: "ELECTRONICS",
+            campus: "Main"
+        });
+        fetchMarketplace(); // Auto refresh
+    }
+
+    // ----- BIDDING -----
+    async function placeBid(listingId) {
+        const amount = document.getElementById(`bid_${listingId}`).value;
+        await api('/bids', 'POST', { listingId, amount });
+    }
+
+    async function getMyBids() { 
+        const res = await api('/bids/user'); 
+        const container = document.getElementById('buyerBidsContainer');
+        if (!res || res.status !== 200) { container.innerHTML = '<p>Error fetching bids</p>'; return; }
         
-        async function getMyBids() {
-            await fetchAPI('/bids/user');
-        }
+        container.innerHTML = '';
+        if (res.data.length === 0) { container.innerHTML = '<p>No active bids placed.</p>'; return; }
+        
+        res.data.forEach(bid => {
+            const card = document.createElement('div');
+            card.className = 'listing-card';
+            card.innerHTML = `
+                <h4>${bid.listing.title}</h4>
+                <p><strong>Original Price:</strong> $${bid.listing.price}</p>
+                <p><strong>Your Bid:</strong> <span style="color:var(--primary); font-weight:bold;">$${bid.amount}</span></p>
+                <p><strong>Status:</strong> <span class="badge ${bid.status === 'ACCEPTED' ? 'btn-success' : (bid.status === 'REJECTED' ? 'btn-danger' : '')}" style="color:black;">${bid.status || 'PENDING'}</span></p>
+            `;
+            container.appendChild(card);
+        });
+    }
 
-        async function updateBid() {
-            const bidId = document.getElementById('bidId').value;
-            const status = document.getElementById('bidStatus').value;
-            await fetchAPI(`/bids/${bidId}/status`, 'PUT', { status });
-        }
-    </script>
+    async function getSellerBids() { 
+        const res = await api('/bids/seller'); 
+        const container = document.getElementById('sellerBidsContainer');
+        if (!res || res.status !== 200) { container.innerHTML = '<p>Error fetching bids</p>'; return; }
+        
+        container.innerHTML = '';
+        if (res.data.length === 0) { container.innerHTML = '<p>No incoming bids yet.</p>'; return; }
+        
+        res.data.forEach(bid => {
+            const card = document.createElement('div');
+            card.className = 'listing-card';
+            const status = bid.status || 'PENDING';
+            card.innerHTML = `
+                <h4>${bid.listing.title}</h4>
+                <p><strong>Buyer:</strong> ${bid.buyer.name} <br> <small>${bid.buyer.email}</small></p>
+                <p><strong>Bid Amount:</strong> <span style="color:var(--primary); font-weight:bold;">$${bid.amount}</span></p>
+                <p><strong>Status:</strong> <span class="badge">${status}</span></p>
+                ${status === 'PENDING' ? `
+                    <div class="flex" style="margin-top: 10px;">
+                        <button onclick="updateBidStatus('${bid.id}', 'ACCEPTED')" class="btn-success">Accept</button>
+                        <button onclick="updateBidStatus('${bid.id}', 'REJECTED')" class="btn-danger">Reject</button>
+                    </div>
+                ` : ''}
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    async function updateBidStatus(bidId, status) {
+        await api(`/bids/${bidId}/status`, 'PUT', { status });
+        getSellerBids(); // Auto-refresh the incoming bids
+    }
+
+    // Run on load
+    checkSession();
+</script>
+
 </body>
 </html>
