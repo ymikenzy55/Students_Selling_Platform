@@ -101,6 +101,41 @@
         </div>
     </div>
 
+    <!-- MESSAGING UI -->
+    <div class="card" id="messagingSection">
+        <div class="flex" style="align-items: center; justify-content: space-between;">
+            <h2>Messages & Notifications</h2>
+            <button onclick="fetchActiveConversations()" style="width: auto; padding: 8px 15px;" class="btn-secondary">Refresh Inbox</button>
+        </div>
+        
+        <div class="grid" style="margin-top: 15px;">
+            <div style="border-right: 1px solid #eee; padding-right: 15px;">
+                <h3>Active Conversations</h3>
+                <div id="conversationsContainer"><p>No messages yet.</p></div>
+            </div>
+            
+            <div style="padding-left: 15px;">
+                <h3>Chat History</h3>
+                <div id="chatHistoryContainer" style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px;">
+                    <p style="text-align:center; color:#6b7280; margin-top: 120px;">Select a conversation to start chatting.</p>
+                </div>
+                
+                <div class="flex">
+                    <input type="hidden" id="chatReceiverId">
+                    <input type="text" id="chatMessageInput" placeholder="Type your message..." style="margin:0; flex: 3;">
+                    <button onclick="sendMessage()" style="margin:0; flex: 1;">Send</button>
+                </div>
+                
+                <hr style="margin-top: 20px;">
+                <h4>Start New Chat</h4>
+                <div class="flex">
+                    <input type="text" id="newChatUserId" placeholder="Paste User ID here..." style="margin:0;">
+                    <button onclick="startNewChat()" style="margin:0; background: #059669;">Start</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- CONSOLE -->
     <div class="card">
         <h2>API Response Console</h2>
@@ -155,11 +190,13 @@
                 sellerSection.classList.add('hidden');
             }
             fetchMarketplace();
+            fetchActiveConversations();
         } else {
             authSection.classList.remove('hidden');
             logoutBtn.classList.add('hidden');
             sellerSection.classList.add('hidden');
             buyerSection.classList.add('hidden');
+            document.getElementById('messagingSection').classList.add('hidden');
             statusText.innerText = "Not logged in";
             document.getElementById('listingsContainer').innerHTML = '<p>Log in to interact with the marketplace.</p>';
         }
@@ -291,11 +328,15 @@
         res.data.forEach(bid => {
             const card = document.createElement('div');
             card.className = 'listing-card';
+            const sellerName = bid.listing.seller ? bid.listing.seller.name : 'Unknown Seller';
+            const sellerId = bid.listing.seller ? bid.listing.seller.id : null;
+            
             card.innerHTML = `
                 <h4>${bid.listing.title}</h4>
                 <p><strong>Original Price:</strong> $${bid.listing.price}</p>
                 <p><strong>Your Bid:</strong> <span style="color:var(--primary); font-weight:bold;">$${bid.amount}</span></p>
                 <p><strong>Status:</strong> <span class="badge ${bid.status === 'ACCEPTED' ? 'btn-success' : (bid.status === 'REJECTED' ? 'btn-danger' : '')}" style="color:black;">${bid.status || 'PENDING'}</span></p>
+                ${sellerId ? `<button onclick="jumpToChat('${sellerId}', '${sellerName}')" style="background-color: #6b7280; margin-top: 10px; padding: 6px;">💬 Message Seller</button>` : ''}
             `;
             container.appendChild(card);
         });
@@ -318,8 +359,9 @@
                 <p><strong>Buyer:</strong> ${bid.buyer.name} <br> <small>${bid.buyer.email}</small></p>
                 <p><strong>Bid Amount:</strong> <span style="color:var(--primary); font-weight:bold;">$${bid.amount}</span></p>
                 <p><strong>Status:</strong> <span class="badge">${status}</span></p>
+                <button onclick="jumpToChat('${bid.buyerId}', '${bid.buyer.name}')" style="background-color: #6b7280; margin: 10px 0 5px 0; padding: 6px;">💬 Message Buyer</button>
                 ${status === 'PENDING' ? `
-                    <div class="flex" style="margin-top: 10px;">
+                    <div class="flex" style="margin-top: 5px;">
                         <button onclick="updateBidStatus('${bid.id}', 'ACCEPTED')" class="btn-success">Accept</button>
                         <button onclick="updateBidStatus('${bid.id}', 'REJECTED')" class="btn-danger">Reject</button>
                     </div>
@@ -332,6 +374,85 @@
     async function updateBidStatus(bidId, status) {
         await api(`/bids/${bidId}/status`, 'PUT', { status });
         getSellerBids(); // Auto-refresh the incoming bids
+    }
+    
+    function jumpToChat(partnerId, partnerName) {
+        document.getElementById('messagingSection').scrollIntoView({ behavior: 'smooth' });
+        openChat(partnerId, partnerName);
+    }
+
+    // ----- MESSAGING -----
+    async function fetchActiveConversations() {
+        if (!currentUser) return;
+        const res = await api('/messages/conversations');
+        const container = document.getElementById('conversationsContainer');
+        if (!res || res.status !== 200) { container.innerHTML = '<p>Error.</p>'; return; }
+        
+        container.innerHTML = '';
+        if (res.data.length === 0) { container.innerHTML = '<p>No conversations.</p>'; return; }
+        
+        res.data.forEach(conv => {
+            const div = document.createElement('div');
+            div.style.cssText = "padding: 10px; border: 1px solid #eee; border-radius: 6px; margin-bottom: 10px; cursor: pointer; background: white;";
+            div.onclick = () => openChat(conv.partner.id, conv.partner.name);
+            div.innerHTML = `
+                <strong style="color:var(--primary);">${conv.partner.name}</strong>
+                <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${conv.lastMessage}</p>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    async function openChat(partnerId, partnerName) {
+        document.getElementById('chatReceiverId').value = partnerId;
+        const res = await api(`/messages/${partnerId}`);
+        const container = document.getElementById('chatHistoryContainer');
+        container.innerHTML = `<h4 style="margin-top:0; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Chat with ${partnerName}</h4>`;
+        
+        if (res && res.status === 200) {
+            if (res.data.length === 0) {
+                container.innerHTML += `<p style="text-align:center; color:#6b7280;">No message history. Say hi!</p>`;
+            } else {
+                res.data.forEach(msg => {
+                    const isMe = msg.senderId === currentUser.id;
+                    const align = isMe ? 'right' : 'left';
+                    const bg = isMe ? 'var(--primary)' : '#e5e7eb';
+                    const color = isMe ? 'white' : 'black';
+                    
+                    container.innerHTML += `
+                        <div style="text-align: ${align}; margin-bottom: 10px;">
+                            <span style="display:inline-block; max-width: 80%; padding: 8px 12px; border-radius: 15px; background: ${bg}; color: ${color}; text-align: left; word-wrap: break-word;">
+                                ${msg.content}
+                            </span>
+                        </div>
+                    `;
+                });
+            }
+            // scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    async function sendMessage() {
+        const receiverId = document.getElementById('chatReceiverId').value;
+        const input = document.getElementById('chatMessageInput');
+        const content = input.value.trim();
+        
+        if (!receiverId || !content) return alert('Select a chat and enter a message.');
+        
+        const res = await api('/messages', 'POST', { receiverId, content });
+        if (res && res.status === 201) {
+            input.value = '';
+            openChat(receiverId, "User"); // Re-fetch to show new message
+            fetchActiveConversations(); // Update inbox
+        } else {
+            alert('Failed to send message.');
+        }
+    }
+    
+    function startNewChat() {
+        const uid = document.getElementById('newChatUserId').value.trim();
+        if (uid) openChat(uid, "User ID: " + uid.substring(0, 6) + "...");
     }
 
     // Run on load

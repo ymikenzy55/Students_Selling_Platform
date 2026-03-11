@@ -45,7 +45,14 @@ export const getUserBids = async (req: Request, res: Response) => {
       where: { buyerId },
       include: {
         listing: {
-          select: { title: true, price: true, imageUrl: true }
+          select: { 
+            title: true, 
+            price: true, 
+            imageUrl: true,
+            seller: {
+              select: { id: true, name: true }
+            }
+          }
         }
       },
       orderBy: { createdAt: 'desc' }
