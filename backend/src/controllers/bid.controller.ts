@@ -58,6 +58,29 @@ export const getUserBids = async (req: Request, res: Response) => {
   }
 };
 
+// Get all bids placed on the seller's listings (for Sellers)
+export const getSellerBids = async (req: Request, res: Response) => {
+  try {
+    const sellerId = (req as any).user.userId;
+
+    const bids = await prisma.bid.findMany({
+      where: {
+        listing: { sellerId } // Find bids where the listing belongs to this seller
+      },
+      include: {
+        listing: { select: { title: true, price: true } },
+        buyer: { select: { name: true, email: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(bids);
+  } catch (error: any) {
+    console.error('Get seller bids error:', error);
+    res.status(500).json({ message: 'Server error fetching seller bids' });
+  }
+};
+
 // Seller accepts or rejects a bid
 export const updateBidStatus = async (req: Request, res: Response) => {
   try {
