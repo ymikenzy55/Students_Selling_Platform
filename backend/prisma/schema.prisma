@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  name            String?
+  role            UserRole  @default(BUYER)
+  ghanaCardNumber String?   @unique
+  isVerified      Boolean   @default(false)
+  
+  // Relations
+  listings        Listing[]
+  bidsPlaced      Bid[]
+  messagesSent    Message[] @relation("Sender")
+  messagesReceived Message[] @relation("Receiver")
+  transactions    Transaction[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+model Listing {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  condition   String
+  category    String
+  campus      String
+  imageUrl    String?
+  isSoldOut   Boolean  @default(false)
+  
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id])
+  
+  bids        Bid[]
+  transactions Transaction[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Bid {
+  id          String   @id @default(uuid())
+  amount      Float
+  status      BidStatus @default(PENDING)
+  
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  
+  buyerId     String
+  buyer       User     @relation(fields: [buyerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  content     String
+  
+  senderId    String
+  sender      User     @relation("Sender", fields: [senderId], references: [id])
+  
+  receiverId  String
+  receiver    User     @relation("Receiver", fields: [receiverId], references: [id])
+  
+  createdAt   DateTime @default(now())
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  amount      Float
+  status      TxStatus @default(HELD_IN_ESCROW)
+  
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  
+  buyerId     String
+  buyer       User     @relation(fields: [buyerId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum TxStatus {
+  HELD_IN_ESCROW
+  RELEASED_TO_SELLER
+  REFUNDED
+  DISPUTED
+}
