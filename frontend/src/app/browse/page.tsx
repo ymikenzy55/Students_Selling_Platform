@@ -23,11 +23,20 @@ export default function BrowsePage() {
   const [sortBy, setSortBy] = useState<string>('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [minRating, setMinRating] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   // Update selected category when URL parameter changes
   useEffect(() => {
     setSelectedCategory(categoryFromUrl);
   }, [categoryFromUrl]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCategory, selectedCondition, selectedCampus, priceRange, verifiedOnly, minRating, sortBy]);
 
   // Filter and sort listings
   const filteredListings = useMemo(() => {
@@ -57,6 +66,20 @@ export default function BrowsePage() {
         return false;
       }
       
+      // Verified sellers only filter
+      if (verifiedOnly && !listing.seller.isVerified) {
+        return false;
+      }
+      
+      // Minimum rating filter (mock - using verification as proxy for now)
+      // In production, this would check actual seller rating from API
+      if (minRating > 0) {
+        const sellerRating = listing.seller.isVerified ? 4.5 : 3.5; // Mock rating
+        if (sellerRating < minRating) {
+          return false;
+        }
+      }
+      
       return true;
     });
 
@@ -77,16 +100,29 @@ export default function BrowsePage() {
     }
 
     return filtered;
-  }, [searchQuery, selectedCategory, selectedCondition, selectedCampus, priceRange, sortBy]);
+  }, [searchQuery, selectedCategory, selectedCondition, selectedCampus, priceRange, sortBy, verifiedOnly, minRating]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredListings.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedListings = filteredListings.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const clearFilters = () => {
     setSelectedCategory('');
     setSelectedCondition('');
     setSelectedCampus('');
     setPriceRange([0, 50000]);
+    setVerifiedOnly(false);
+    setMinRating(0);
   };
 
-  const hasActiveFilters = selectedCategory || selectedCondition || selectedCampus || priceRange[0] > 0 || priceRange[1] < 50000;
+  const hasActiveFilters = selectedCategory || selectedCondition || selectedCampus || priceRange[0] > 0 || priceRange[1] < 50000 || verifiedOnly || minRating > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -173,7 +209,7 @@ export default function BrowsePage() {
               </div>
 
               {/* Price Range */}
-              <div>
+              <div className="mb-6">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Price Range: GH₵{priceRange[0]} - GH₵{priceRange[1].toLocaleString()}
                 </label>
@@ -186,6 +222,74 @@ export default function BrowsePage() {
                   onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                   className="w-full"
                 />
+              </div>
+
+              {/* Verified Sellers Only */}
+              <div className="mb-6">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={verifiedOnly}
+                    onChange={(e) => setVerifiedOnly(e.target.checked)}
+                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
+                  />
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-gray-700">Verified Sellers Only</span>
+                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                </label>
+              </div>
+
+              {/* Minimum Rating */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Minimum Seller Rating
+                </label>
+                <div className="space-y-2">
+                  {[
+                    { value: 0, label: 'Any Rating' },
+                    { value: 3, label: '3+ Stars' },
+                    { value: 4, label: '4+ Stars' },
+                    { value: 4.5, label: '4.5+ Stars' }
+                  ].map((option) => (
+                    <label
+                      key={option.value}
+                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                        minRating === option.value ? 'bg-purple-50' : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="rating"
+                        value={option.value}
+                        checked={minRating === option.value}
+                        onChange={(e) => setMinRating(parseFloat(e.target.value))}
+                        className="w-4 h-4 text-purple-600 cursor-pointer"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-900">{option.label}</span>
+                        {option.value > 0 && (
+                          <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                              <svg
+                                key={i}
+                                className={`w-3 h-3 ${
+                                  i < Math.floor(option.value) ? 'text-yellow-400' : 'text-gray-300'
+                                }`}
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
           </aside>
@@ -349,10 +453,43 @@ export default function BrowsePage() {
                     </select>
                   </div>
 
+                  <div>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={verifiedOnly}
+                        onChange={(e) => setVerifiedOnly(e.target.checked)}
+                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-gray-700">Verified Sellers Only</span>
+                        <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Minimum Seller Rating
+                    </label>
+                    <select
+                      value={minRating}
+                      onChange={(e) => setMinRating(parseFloat(e.target.value))}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                    >
+                      <option value="0">Any Rating</option>
+                      <option value="3">3+ Stars ⭐⭐⭐</option>
+                      <option value="4">4+ Stars ⭐⭐⭐⭐</option>
+                      <option value="4.5">4.5+ Stars ⭐⭐⭐⭐⭐</option>
+                    </select>
+                  </div>
+
                   {hasActiveFilters && (
                     <button
                       onClick={clearFilters}
-                      className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700"
+                      className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 cursor-pointer"
                     >
                       Clear Filters
                     </button>
@@ -362,20 +499,91 @@ export default function BrowsePage() {
             )}
 
             {/* Product Grid or List */}
-            {filteredListings.length > 0 ? (
-              viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredListings.map(listing => (
-                    <ProductCard key={listing.id} listing={listing} />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {filteredListings.map(listing => (
-                    <ProductListItem key={listing.id} {...listing} />
-                  ))}
-                </div>
-              )
+            {paginatedListings.length > 0 ? (
+              <>
+                {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {paginatedListings.map(listing => (
+                      <ProductCard key={listing.id} listing={listing} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {paginatedListings.map(listing => (
+                      <ProductListItem key={listing.id} {...listing} />
+                    ))}
+                  </div>
+                )}
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    {/* Page Info */}
+                    <div className="text-sm text-gray-600">
+                      Showing {startIndex + 1}-{Math.min(endIndex, filteredListings.length)} of {filteredListings.length} items
+                    </div>
+
+                    {/* Pagination Controls */}
+                    <div className="flex items-center gap-2">
+                      {/* Previous Button */}
+                      <button
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                      >
+                        Previous
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex items-center gap-1">
+                        {[...Array(totalPages)].map((_, index) => {
+                          const page = index + 1;
+                          
+                          // Show first page, last page, current page, and pages around current
+                          if (
+                            page === 1 ||
+                            page === totalPages ||
+                            (page >= currentPage - 1 && page <= currentPage + 1)
+                          ) {
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => goToPage(page)}
+                                className={`w-10 h-10 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                                  currentPage === page
+                                    ? 'bg-purple-600 text-white shadow-md'
+                                    : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            );
+                          } else if (
+                            page === currentPage - 2 ||
+                            page === currentPage + 2
+                          ) {
+                            return (
+                              <span key={page} className="px-2 text-gray-400">
+                                ...
+                              </span>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={() => goToPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="text-center py-16">
                 <div className="text-gray-400 mb-4">

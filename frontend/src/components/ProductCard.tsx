@@ -150,7 +150,7 @@ export default function ProductCard({
       onClick={handleCardClick}
     >
       {/* Image */}
-      <div className="relative h-56 bg-gray-100 overflow-hidden">
+      <div className="relative h-48 bg-gray-100 overflow-hidden">
         <Image
           src={listing.imageUrl}
           alt={listing.title}
@@ -159,18 +159,18 @@ export default function ProductCard({
         />
         {listing.isSoldOut && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-4 py-2 rounded-full font-bold text-sm">
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full font-bold text-xs">
               SOLD OUT
             </span>
           </div>
         )}
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-700">
+        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs font-semibold text-gray-700">
           {formatCondition(listing.condition)}
         </div>
         {showWishlistButton && (
           <button
             onClick={handleWishlistClick}
-            className={`absolute top-3 left-3 p-2 rounded-full backdrop-blur-sm transition-all hover:scale-110 ${
+            className={`absolute top-2 left-2 p-1.5 rounded-full backdrop-blur-sm transition-all hover:scale-110 ${
               isWishlisted 
                 ? 'bg-red-500 text-white' 
                 : 'bg-white/90 text-gray-600 hover:text-red-500'
@@ -182,13 +182,13 @@ export default function ProductCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
+      <div className="p-3">
+        <h3 className="font-bold text-base text-gray-900 mb-1.5 line-clamp-2 group-hover:text-purple-600 transition-colors">
           {listing.title}
         </h3>
         
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-2xl font-extrabold text-purple-600">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xl font-extrabold text-purple-600">
             GH₵{listing.price.toFixed(2)}
           </span>
           <span className="text-xs text-gray-500">
@@ -196,18 +196,18 @@ export default function ProductCard({
           </span>
         </div>
 
-        <div className="flex items-center space-x-2 text-sm text-gray-600">
+        <div className="flex items-center space-x-2 text-xs text-gray-600">
           <button 
             onClick={(e) => {
               e.stopPropagation();
               router.push(`/seller/${listing.seller.id}`);
             }}
-            className="hover:text-purple-600 transition-colors cursor-pointer font-medium"
+            className="hover:text-purple-600 transition-colors cursor-pointer font-medium truncate"
           >
             {listing.seller.name}
           </button>
           {listing.seller.isVerified && (
-            <BadgeCheck className="w-4 h-4 text-blue-500" />
+            <BadgeCheck className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
           )}
         </div>
       </div>

@@ -217,19 +217,19 @@ export default function DashboardPage() {
                 <>
                   <button
                     onClick={() => router.push('/create-listing')}
-                    className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl border-2 border-transparent hover:border-purple-300 transition-all shadow-lg hover:shadow-xl cursor-pointer relative before:absolute before:inset-0 before:rounded-xl before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
                   >
-                    <Plus className="w-6 h-6" />
+                    <Plus className="w-6 h-6 text-purple-600" />
                     <div className="text-left">
-                      <h3 className="font-semibold">Create New Listing</h3>
-                      <p className="text-sm text-purple-100">Sell something new</p>
+                      <h3 className="font-semibold text-purple-600">Create New Listing</h3>
+                      <p className="text-sm text-purple-500">Sell something new</p>
                     </div>
-                    <ArrowRight className="w-5 h-5 ml-auto" />
+                    <ArrowRight className="w-5 h-5 ml-auto text-purple-600" />
                   </button>
 
                   <button
                     onClick={() => router.push('/dashboard/listings')}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-gray-700 rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     <Package className="w-6 h-6 text-gray-600" />
                     <div className="text-left">
@@ -241,7 +241,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => router.push('/dashboard/transactions')}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-gray-700 rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     <CreditCard className="w-6 h-6 text-gray-600" />
                     <div className="text-left">
@@ -255,19 +255,19 @@ export default function DashboardPage() {
                 <>
                   <button
                     onClick={() => router.push('/browse')}
-                    className="w-full flex items-center gap-4 p-4 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl border-2 border-transparent hover:border-purple-300 transition-all shadow-lg hover:shadow-xl cursor-pointer relative before:absolute before:inset-0 before:rounded-xl before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
                   >
-                    <Package className="w-6 h-6" />
+                    <Package className="w-6 h-6 text-purple-600" />
                     <div className="text-left">
-                      <h3 className="font-semibold">Browse Items</h3>
-                      <p className="text-sm text-purple-100">Find great deals</p>
+                      <h3 className="font-semibold text-purple-600">Browse Items</h3>
+                      <p className="text-sm text-purple-500">Find great deals</p>
                     </div>
-                    <ArrowRight className="w-5 h-5 ml-auto" />
+                    <ArrowRight className="w-5 h-5 ml-auto text-purple-600" />
                   </button>
 
                   <button
                     onClick={() => router.push('/dashboard/bids')}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-gray-700 rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     <Gavel className="w-6 h-6 text-gray-600" />
                     <div className="text-left">
@@ -279,7 +279,7 @@ export default function DashboardPage() {
 
                   <button
                     onClick={() => router.push('/wishlist')}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-4 p-4 bg-white text-gray-700 rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
                   >
                     <Heart className="w-6 h-6 text-gray-600" />
                     <div className="text-left">
@@ -293,7 +293,7 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => router.push('/messages')}
-                className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                className="w-full flex items-center gap-4 p-4 bg-white text-gray-700 rounded-xl border-2 border-gray-300 hover:border-gray-400 transition-colors cursor-pointer"
               >
                 <MessageCircle className="w-6 h-6 text-gray-600" />
                 <div className="text-left">
@@ -386,8 +386,8 @@ export default function DashboardPage() {
             </div>
 
             <button
-              onClick={() => router.push('/dashboard/profile')}
-              className="w-full mt-6 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition-colors font-medium cursor-pointer"
+              onClick={() => router.push('/dashboard/transactions')}
+              className="w-full mt-6 px-4 py-2 text-sm bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors font-medium cursor-pointer"
             >
               View All Activity
             </button>
@@ -400,7 +400,7 @@ export default function DashboardPage() {
             <h2 className="text-xl font-bold text-gray-900">Account Status</h2>
             <button
               onClick={() => router.push('/dashboard/profile')}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium cursor-pointer"
+              className="text-sm bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors font-medium px-4 py-2 cursor-pointer"
             >
               Manage Account
             </button>

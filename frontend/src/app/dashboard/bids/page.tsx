@@ -340,7 +340,7 @@ export default function MyBidsPage() {
                     <div className="flex items-center gap-3">
                       <button
                         onClick={() => router.push(`/listing/${bid.listing.id}`)}
-                        className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors flex items-center gap-2 cursor-pointer"
+                        className="px-4 py-2 text-sm font-medium bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors flex items-center gap-2 cursor-pointer"
                       >
                         View Listing
                         <ExternalLink className="w-4 h-4" />
@@ -349,7 +349,7 @@ export default function MyBidsPage() {
                       {bid.status === 'ACCEPTED' && (
                         <button
                           onClick={() => router.push('/dashboard/transactions')}
-                          className="px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors cursor-pointer"
+                          className="px-4 py-2 text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors cursor-pointer"
                         >
                           Proceed to Payment
                         </button>
@@ -374,9 +374,9 @@ export default function MyBidsPage() {
             </p>
             <button
               onClick={() => router.push('/browse')}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer"
+              className="px-6 py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
             >
-              Browse Listings
+              <span className="text-purple-600">Browse Listings</span>
             </button>
           </div>
         )}

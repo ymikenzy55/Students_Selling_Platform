@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import DashboardHeader from '@/components/DashboardHeader';
 import Breadcrumb from '@/components/Breadcrumb';
+import ContactSupportModal from '@/components/ContactSupportModal';
 import { 
   DollarSign, 
   Clock, 
@@ -99,6 +100,8 @@ export default function TransactionsPage() {
 
   const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'HELD_IN_ESCROW' | 'RELEASED_TO_SELLER' | 'REFUNDED' | 'DISPUTED'>('ALL');
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   // Redirect if not authorized
   useEffect(() => {
@@ -178,10 +181,40 @@ export default function TransactionsPage() {
     }
   };
 
-  const handleDownloadInvoice = (transactionId: string) => {
-    // Mock download - in production, this would generate/download a PDF
-    console.log('Downloading invoice for transaction:', transactionId);
-    alert('Invoice download would start here');
+  const handleDownloadInvoice = (transaction: Transaction) => {
+    // Generate invoice content
+    const invoiceContent = `
+sBay Student Marketplace
+Invoice
+
+Transaction ID: ${transaction.id}
+Date: ${formatDate(transaction.createdAt)}
+${transaction.releasedAt ? `Released: ${formatDate(transaction.releasedAt)}` : ''}
+
+ITEM DETAILS
+${transaction.listing.title}
+
+BUYER INFORMATION
+Name: ${transaction.buyer.name}
+
+PAYMENT DETAILS
+Amount: GH₵${transaction.amount.toFixed(2)}
+Status: ${getStatusLabel(transaction.status)}
+
+Thank you for using sBay!
+For support, contact: support@sbay.com
+    `.trim();
+
+    // Create blob and download
+    const blob = new Blob([invoiceContent], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `sBay-Invoice-${transaction.id}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   };
 
   const filteredTransactions = filterStatus === 'ALL' 
@@ -315,15 +348,15 @@ export default function TransactionsPage() {
 
         {/* Transactions List */}
         {filteredTransactions.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredTransactions.map(transaction => (
               <div
                 key={transaction.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+                className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-start gap-6">
+                <div className="flex items-start gap-3">
                   {/* Listing Image */}
-                  <div className="relative w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
                     <Image
                       src={transaction.listing.imageUrl}
                       alt={transaction.listing.title}
@@ -334,84 +367,85 @@ export default function TransactionsPage() {
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    <div className="flex items-start justify-between gap-3 mb-1.5">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold text-gray-900 truncate">
                           {transaction.listing.title}
                         </h3>
-                        <p className="text-sm text-gray-600">
-                          Buyer: {transaction.buyer.name}
+                        <p className="text-xs text-gray-600">
+                          {transaction.buyer.name}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
                         {getStatusIcon(transaction.status)}
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(transaction.status)}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${getStatusColor(transaction.status)}`}>
                           {getStatusLabel(transaction.status)}
                         </span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                    <div className="flex items-center gap-4 mb-2 text-xs">
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Amount</p>
-                        <p className="text-2xl font-bold text-purple-600">GH₵{transaction.amount.toFixed(2)}</p>
+                        <span className="font-bold text-lg text-purple-600">GH₵{transaction.amount.toFixed(2)}</span>
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Transaction Date</p>
-                        <p className="text-sm text-gray-900">{formatDate(transaction.createdAt)}</p>
+                      <div className="text-gray-500">
+                        {formatDate(transaction.createdAt)}
                       </div>
                       {transaction.releasedAt && (
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Released Date</p>
-                          <p className="text-sm text-gray-900">{formatDate(transaction.releasedAt)}</p>
+                        <div className="text-gray-500">
+                          Released: {formatDate(transaction.releasedAt)}
                         </div>
                       )}
                     </div>
 
                     {/* Status Info */}
                     {transaction.status === 'HELD_IN_ESCROW' && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                        <p className="text-sm text-blue-800">
-                          <Shield className="w-4 h-4 inline mr-1" />
-                          Payment is held in escrow. Funds will be released once the buyer confirms receipt.
+                      <div className="bg-blue-50 border border-blue-200 rounded p-2 mb-2">
+                        <p className="text-xs text-blue-800">
+                          <Shield className="w-3 h-3 inline mr-1" />
+                          Funds held in escrow until buyer confirms receipt.
                         </p>
                       </div>
                     )}
 
                     {transaction.status === 'DISPUTED' && (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                        <p className="text-sm text-red-800">
-                          <AlertTriangle className="w-4 h-4 inline mr-1" />
-                          This transaction is under dispute. Our support team will review and resolve it.
+                      <div className="bg-red-50 border border-red-200 rounded p-2 mb-2">
+                        <p className="text-xs text-red-800">
+                          <AlertTriangle className="w-3 h-3 inline mr-1" />
+                          Transaction disputed. Support team reviewing.
                         </p>
                       </div>
                     )}
 
                     {/* Actions */}
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => router.push(`/listing/${transaction.listing.id}`)}
-                        className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors flex items-center gap-2 cursor-pointer"
+                        className="px-2.5 py-1 text-xs font-medium bg-white text-purple-600 rounded border border-purple-300 hover:border-purple-400 transition-colors flex items-center gap-1 cursor-pointer"
                       >
-                        View Listing
-                        <ExternalLink className="w-4 h-4" />
+                        View
+                        <ExternalLink className="w-3 h-3" />
                       </button>
                       
                       {transaction.status === 'RELEASED_TO_SELLER' && (
                         <button
-                          onClick={() => handleDownloadInvoice(transaction.id)}
-                          className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2 cursor-pointer"
+                          onClick={() => handleDownloadInvoice(transaction)}
+                          className="px-2.5 py-1 text-xs font-medium bg-white text-gray-600 rounded border border-gray-300 hover:border-gray-400 transition-colors flex items-center gap-1 cursor-pointer"
                         >
-                          <Download className="w-4 h-4" />
-                          Download Invoice
+                          <Download className="w-3 h-3" />
+                          Invoice
                         </button>
                       )}
 
                       {transaction.status === 'DISPUTED' && (
                         <button
-                          className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
+                          onClick={() => {
+                            setSelectedTransaction(transaction);
+                            setShowSupportModal(true);
+                          }}
+                          className="px-2.5 py-1 text-xs font-medium bg-white text-red-600 rounded border border-red-300 hover:border-red-400 transition-colors cursor-pointer"
                         >
-                          Contact Support
+                          Support
                         </button>
                       )}
                     </div>
@@ -434,13 +468,26 @@ export default function TransactionsPage() {
             </p>
             <button
               onClick={() => router.push('/dashboard/listings')}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer"
+              className="px-6 py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
             >
-              View My Listings
+              <span className="text-purple-600">View My Listings</span>
             </button>
           </div>
         )}
       </main>
+
+      {/* Contact Support Modal */}
+      {selectedTransaction && (
+        <ContactSupportModal
+          isOpen={showSupportModal}
+          onClose={() => {
+            setShowSupportModal(false);
+            setSelectedTransaction(null);
+          }}
+          transactionId={selectedTransaction.id}
+          transactionTitle={selectedTransaction.listing.title}
+        />
+      )}
     </div>
   );
 }

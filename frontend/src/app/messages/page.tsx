@@ -363,28 +363,28 @@ export default function MessagesPage() {
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-100px)]">
-        <div className="mb-6">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Messages</h1>
-          <p className="text-gray-600">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 h-[calc(100vh-80px)]">
+        <div className="mb-3">
+          <h1 className="text-2xl font-extrabold text-gray-900 mb-1">Messages</h1>
+          <p className="text-sm text-gray-600">
             {totalUnread > 0 ? `${totalUnread} unread message${totalUnread > 1 ? 's' : ''}` : 'All caught up!'}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-[calc(100%-100px)] flex">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden h-[calc(100%-70px)] flex">
           <div className="grid grid-cols-1 md:grid-cols-3 h-full w-full min-h-0">
             {/* Conversations List */}
             <div className="border-r border-gray-200 flex flex-col h-full min-h-0">
               {/* Search */}
-              <div className="p-4 border-b border-gray-200 flex-shrink-0">
+              <div className="p-3 border-b border-gray-200 flex-shrink-0">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search conversations..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 bg-white"
+                    className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 bg-white"
                   />
                 </div>
               </div>
@@ -396,46 +396,46 @@ export default function MessagesPage() {
                     <div
                       key={conversation.id}
                       onClick={() => handleSelectConversation(conversation)}
-                      className={`p-4 border-b border-gray-100 cursor-pointer transition-all ${
+                      className={`p-2.5 border-b border-gray-100 cursor-pointer transition-all ${
                         selectedConversation?.id === conversation.id 
                           ? 'bg-purple-50 border-l-4 border-l-purple-600' 
                           : 'hover:bg-gray-50 border-l-4 border-l-transparent'
                       }`}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-center gap-2">
                         {/* Avatar */}
                         <div className="relative flex-shrink-0">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-sm">
-                            <span className="text-white font-bold text-lg">
+                          <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <span className="text-white font-bold text-sm">
                               {conversation.otherUser.name.charAt(0)}
                             </span>
                           </div>
                           {conversation.otherUser.isOnline && (
-                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></div>
+                            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
                           )}
                         </div>
 
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <h3 className="font-bold text-gray-900 truncate">
+                          <div className="flex items-center justify-between mb-0.5">
+                            <h3 className="font-semibold text-sm text-gray-900 truncate">
                               {conversation.otherUser.name}
                             </h3>
                             <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
                               {formatTime(conversation.lastMessage.timestamp)}
                             </span>
                           </div>
-                          <p className="text-xs text-purple-600 font-medium truncate mb-1.5">
+                          <p className="text-xs text-purple-600 font-medium truncate mb-0.5">
                             {conversation.listing.title}
                           </p>
                           <div className="flex items-center justify-between">
-                            <p className={`text-sm truncate ${
+                            <p className={`text-xs truncate ${
                               conversation.unreadCount > 0 ? 'font-semibold text-gray-900' : 'text-gray-500'
                             }`}>
                               {conversation.lastMessage.text}
                             </p>
                             {conversation.unreadCount > 0 && (
-                              <span className="ml-2 min-w-[20px] h-5 px-1.5 bg-purple-600 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="ml-2 min-w-[18px] h-4 px-1.5 bg-purple-600 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
                                 {conversation.unreadCount}
                               </span>
                             )}
@@ -456,20 +456,20 @@ export default function MessagesPage() {
             {selectedConversation ? (
               <div className="md:col-span-2 flex flex-col h-full min-h-0">
                 {/* Chat Header */}
-                <div className="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-                  <div className="flex items-center gap-3">
+                <div className="p-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+                  <div className="flex items-center gap-2.5">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-sm">
-                        <span className="text-white font-bold">
+                      <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">
                           {selectedConversation.otherUser.name.charAt(0)}
                         </span>
                       </div>
                       {selectedConversation.otherUser.isOnline && (
-                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
                       )}
                     </div>
                     <div>
-                      <h3 className="font-bold text-gray-900">{selectedConversation.otherUser.name}</h3>
+                      <h3 className="font-semibold text-sm text-gray-900">{selectedConversation.otherUser.name}</h3>
                       <p className="text-xs text-gray-500">
                         {selectedConversation.otherUser.isOnline ? 'Online' : 'Offline'}
                       </p>
@@ -548,9 +548,9 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Listing Info */}
-                <div className="p-3 bg-gray-50 border-b border-gray-200 flex-shrink-0">
-                  <div className="flex items-center gap-3">
-                    <div className="relative w-12 h-12 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <div className="p-2.5 bg-gray-50 border-b border-gray-200 flex-shrink-0">
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={selectedConversation.listing.imageUrl}
                         alt={selectedConversation.listing.title}
@@ -559,16 +559,16 @@ export default function MessagesPage() {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-gray-900 truncate">
+                      <p className="text-xs font-semibold text-gray-900 truncate">
                         {selectedConversation.listing.title}
                       </p>
-                      <p className="text-sm text-purple-600 font-bold">
+                      <p className="text-xs text-purple-600 font-bold">
                         GH₵{selectedConversation.listing.price.toFixed(2)}
                       </p>
                     </div>
                     <button
                       onClick={() => router.push(`/listing/${selectedConversation.listing.id}`)}
-                      className="px-3 py-1.5 text-xs font-medium text-purple-600 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
+                      className="px-2.5 py-1.5 text-xs font-medium text-purple-600 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors cursor-pointer"
                     >
                       View
                     </button>
@@ -576,7 +576,7 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50 min-h-0">
+                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 min-h-0">
                   {messages.map((message, index) => {
                     const isCurrentUser = message.senderId === user.id;
                     const showAvatar = index === 0 || messages[index - 1].senderId !== message.senderId;
@@ -584,15 +584,15 @@ export default function MessagesPage() {
                     return (
                       <div
                         key={message.id}
-                        className={`flex gap-3 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}
+                        className={`flex gap-2 ${isCurrentUser ? 'flex-row-reverse' : 'flex-row'}`}
                       >
                         {/* Avatar */}
                         <div className="flex-shrink-0">
                           {showAvatar ? (
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
                               isCurrentUser ? 'bg-purple-600' : 'bg-gray-300'
                             }`}>
-                              <span className="text-white text-sm font-semibold">
+                              <span className="text-white text-xs font-semibold">
                                 {isCurrentUser 
                                   ? user.name?.charAt(0) || 'Y'
                                   : selectedConversation.otherUser.name.charAt(0)
@@ -600,14 +600,14 @@ export default function MessagesPage() {
                               </span>
                             </div>
                           ) : (
-                            <div className="w-8 h-8"></div>
+                            <div className="w-7 h-7"></div>
                           )}
                         </div>
 
                         {/* Message Bubble */}
                         <div className={`flex flex-col max-w-[70%] ${isCurrentUser ? 'items-end' : 'items-start'}`}>
                           <div
-                            className={`px-4 py-3 rounded-2xl shadow-sm ${
+                            className={`px-3 py-2 rounded-2xl ${
                               isCurrentUser
                                 ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-tr-sm'
                                 : 'bg-white text-gray-900 border border-gray-200 rounded-tl-sm'
@@ -615,7 +615,7 @@ export default function MessagesPage() {
                           >
                             <p className="text-sm leading-relaxed">{message.text}</p>
                           </div>
-                          <p className={`text-xs text-gray-500 mt-1 px-1 ${isCurrentUser ? 'text-right' : 'text-left'}`}>
+                          <p className={`text-xs text-gray-500 mt-0.5 px-1 ${isCurrentUser ? 'text-right' : 'text-left'}`}>
                             {formatTime(message.timestamp)}
                           </p>
                         </div>
@@ -626,22 +626,22 @@ export default function MessagesPage() {
                 </div>
 
                 {/* Message Input */}
-                <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white flex-shrink-0">
-                  <div className="flex items-end gap-3">
-                    <div className="flex gap-2">
+                <form onSubmit={handleSendMessage} className="p-3 border-t border-gray-200 bg-white flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1">
                       <button
                         type="button"
-                        className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                         title="Attach file"
                       >
-                        <Paperclip className="w-5 h-5 text-gray-500" />
+                        <Paperclip className="w-4 h-4 text-gray-500" />
                       </button>
                       <button
                         type="button"
-                        className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                         title="Add image"
                       >
-                        <ImageIcon className="w-5 h-5 text-gray-500" />
+                        <ImageIcon className="w-4 h-4 text-gray-500" />
                       </button>
                     </div>
                     <div className="flex-1 relative">
@@ -650,23 +650,23 @@ export default function MessagesPage() {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message..."
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 bg-white pr-12"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 bg-white pr-10"
                       />
                       <button
                         type="button"
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                         title="Add emoji"
                       >
-                        <Smile className="w-5 h-5 text-gray-500" />
+                        <Smile className="w-4 h-4 text-gray-500" />
                       </button>
                     </div>
                     <button
                       type="submit"
                       disabled={!newMessage.trim()}
-                      className="p-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-xl hover:from-purple-700 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-lg hover:shadow-xl disabled:shadow-none"
+                      className="p-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg hover:from-purple-700 hover:to-purple-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       title="Send message"
                     >
-                      <Send className="w-5 h-5" />
+                      <Send className="w-4 h-4" />
                     </button>
                   </div>
                 </form>

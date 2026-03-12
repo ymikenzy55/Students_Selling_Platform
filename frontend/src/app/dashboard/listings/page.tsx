@@ -126,9 +126,9 @@ export default function MyListingsPage() {
             </div>
             <button
               onClick={() => router.push('/create-listing')}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors shadow-md hover:shadow-lg"
+              className="px-6 py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium shadow-md hover:shadow-lg cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
             >
-              Create New Listing
+              <span className="text-purple-600">Create New Listing</span>
             </button>
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function MyListingsPage() {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => router.push(`/listing/${listing.id}`)}
-                          className="px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+                          className="px-4 py-2 text-sm font-medium bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors cursor-pointer"
                         >
                           View Details
                         </button>
@@ -208,14 +208,14 @@ export default function MyListingsPage() {
                           <>
                             <button
                               onClick={() => handleMarkAsSold(listing.id)}
-                              className="px-4 py-2 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-2"
+                              className="px-4 py-2 text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors flex items-center gap-2 cursor-pointer"
                             >
                               <CheckCircle className="w-4 h-4" />
                               Mark as Sold
                             </button>
                             <button
                               onClick={() => router.push(`/listing/${listing.id}/edit`)}
-                              className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-2"
+                              className="px-4 py-2 text-sm font-medium bg-white text-gray-600 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer"
                             >
                               <Edit className="w-4 h-4" />
                               Edit
@@ -224,7 +224,7 @@ export default function MyListingsPage() {
                         )}
                         <button
                           onClick={() => handleDeleteClick(listing.id)}
-                          className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors flex items-center gap-2 ml-auto cursor-pointer"
+                          className="px-4 py-2 text-sm font-medium bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-colors flex items-center gap-2 ml-auto cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" />
                           Delete
@@ -287,7 +287,7 @@ export default function MyListingsPage() {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => router.push(`/listing/${listing.id}`)}
-                        className="w-full px-3 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+                        className="w-full px-3 py-2 text-sm font-medium bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors cursor-pointer"
                       >
                         View Details
                       </button>
@@ -295,14 +295,14 @@ export default function MyListingsPage() {
                         {!listing.isSoldOut && (
                           <button
                             onClick={() => handleMarkAsSold(listing.id)}
-                            className="flex-1 px-3 py-2 text-xs font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                            className="flex-1 px-3 py-2 text-xs font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors cursor-pointer"
                           >
                             Mark Sold
                           </button>
                         )}
                         <button
                           onClick={() => handleDeleteClick(listing.id)}
-                          className="flex-1 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors cursor-pointer"
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-colors cursor-pointer"
                         >
                           Delete
                         </button>
@@ -320,9 +320,9 @@ export default function MyListingsPage() {
             <p className="text-gray-600 mb-6">Start selling by creating your first listing</p>
             <button
               onClick={() => router.push('/create-listing')}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              className="px-6 py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
             >
-              Create Your First Listing
+              <span className="text-purple-600">Create Your First Listing</span>
             </button>
           </div>
         )}
@@ -348,13 +348,13 @@ export default function MyListingsPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleDeleteCancel}
-                className="flex-1 px-4 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium cursor-pointer"
+                className="flex-1 px-4 py-3 bg-white text-gray-700 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-colors font-medium cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                className="flex-1 px-4 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors font-medium cursor-pointer"
+                className="flex-1 px-4 py-3 bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-colors font-medium cursor-pointer"
               >
                 Delete Listing
               </button>
