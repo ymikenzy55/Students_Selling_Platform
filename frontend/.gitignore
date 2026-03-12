@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# documentation and planning files (not part of the app)
+frontend_blueprint.md
+*_blueprint.md
+notes.md
+todo.md
+TODO.md
+NOTES.md
