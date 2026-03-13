@@ -228,6 +228,22 @@ export default function MessagesPage() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Auto-select conversation when coming from order page
+  useEffect(() => {
+    const openConvData = localStorage.getItem('openConversation');
+    if (openConvData) {
+      const { userId, userName } = JSON.parse(openConvData);
+      localStorage.removeItem('openConversation');
+      
+      // Find conversation with this user
+      const conversation = conversations.find(c => c.otherUser.id === userId || c.otherUser.name === userName);
+      if (conversation) {
+        setSelectedConversation(conversation);
+        setMessages(MOCK_MESSAGES[conversation.id] || []);
+      }
+    }
+  }, [conversations]);
   const [successMessage, setSuccessMessage] = useState('');
   const [reportReason, setReportReason] = useState('');
   const [reportDetails, setReportDetails] = useState('');

@@ -62,7 +62,14 @@ export default function ContactRevealSection({
 
       {/* Message Button */}
       <button
-        onClick={() => router.push('/messages')}
+        onClick={() => {
+          // Store conversation context for messages page
+          localStorage.setItem('openConversation', JSON.stringify({
+            userId: sellerId,
+            userName: sellerName
+          }));
+          router.push('/messages');
+        }}
         className="w-full py-4 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md"
       >
         <MessageCircle className="w-5 h-5" />
