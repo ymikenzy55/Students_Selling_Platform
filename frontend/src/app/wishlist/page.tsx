@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
-import { useToast } from '@/components/Toast';
+import Toast from '@/components/Toast';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
 import { MOCK_LISTINGS } from '@/lib/mockData';
@@ -12,13 +12,17 @@ import { Heart, Grid3X3, List, Search, Filter } from 'lucide-react';
 export default function WishlistPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
-  const { showSuccess, showInfo } = useToast();
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   
   // Mock wishlist data - in production, this would come from API
   const [wishlistIds, setWishlistIds] = useState<string[]>(['listing_101', 'listing_102']);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('date_added');
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
+  };
 
   // Redirect if not logged in
   useEffect(() => {
@@ -64,12 +68,12 @@ export default function WishlistPage() {
 
   const removeFromWishlist = (listingId: string) => {
     setWishlistIds(prev => prev.filter(id => id !== listingId));
-    showInfo('Removed from wishlist', 'Item has been removed from your saved items');
+    showToast('Removed from wishlist', 'info');
   };
 
   const clearWishlist = () => {
     setWishlistIds([]);
-    showSuccess('Wishlist cleared', 'All items have been removed from your wishlist');
+    showToast('Wishlist cleared', 'success');
   };
 
   return (
@@ -213,6 +217,15 @@ export default function WishlistPage() {
           </div>
         )}
       </main>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
