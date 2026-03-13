@@ -37,6 +37,16 @@ export default function OrderDetailPage() {
 
     const fetchOrder = async () => {
       try {
+        // Check if there's pending order data from localStorage
+        const pendingOrderData = localStorage.getItem('pendingOrder');
+        let orderData: any = null;
+        
+        if (pendingOrderData) {
+          orderData = JSON.parse(pendingOrderData);
+          // Clear it after reading
+          localStorage.removeItem('pendingOrder');
+        }
+
         // Mock API call - replace with real API when backend is ready
         // Determine if current user is buyer or seller based on their role
         const isBuyer = user.role === 'BUYER';
@@ -44,7 +54,41 @@ export default function OrderDetailPage() {
         // Map order IDs to corresponding listing data
         let mockOrder: Order;
         
-        if (orderId === 'order_bid_2') {
+        // Use data from localStorage if available
+        if (orderData) {
+          mockOrder = {
+            id: orderId,
+            status: 'pending_payment',
+            amount: orderData.bidAmount,
+            platformFee: orderData.bidAmount * 0.05,
+            sellerAmount: orderData.bidAmount * 0.95,
+            paymentDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            buyerConfirmedAt: null,
+            sellerConfirmedAt: null,
+            createdAt: new Date().toISOString(),
+            completedAt: null,
+            buyerId: isBuyer ? user.id : 'other_buyer_id',
+            sellerId: isBuyer ? 'other_seller_id' : user.id,
+            item: {
+              id: orderData.listingId,
+              title: orderData.listingTitle,
+              imageUrl: orderData.listingImage,
+              condition: 'USED_LIKE_NEW',
+              campus: 'Main Campus'
+            },
+            buyer: {
+              id: isBuyer ? user.id : 'other_buyer_id',
+              name: isBuyer ? (user.name || 'You') : 'Jane Doe',
+              email: isBuyer ? user.email : 'jane@student.edu'
+            },
+            seller: {
+              id: isBuyer ? 'other_seller_id' : user.id,
+              name: isBuyer ? orderData.sellerName : (user.name || 'You'),
+              email: isBuyer ? 'seller@student.edu' : user.email,
+              isVerified: true
+            }
+          };
+        } else if (orderId === 'order_bid_2') {
           // iPhone 13 Pro order (accepted bid)
           mockOrder = {
             id: orderId,

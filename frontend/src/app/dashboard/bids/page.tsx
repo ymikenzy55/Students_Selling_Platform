@@ -348,7 +348,19 @@ export default function MyBidsPage() {
                       
                       {bid.status === 'ACCEPTED' && (
                         <button
-                          onClick={() => router.push(`/orders/order_${bid.id}`)}
+                          onClick={() => {
+                            // Store bid data in localStorage for the order page
+                            localStorage.setItem('pendingOrder', JSON.stringify({
+                              bidId: bid.id,
+                              listingId: bid.listing.id,
+                              listingTitle: bid.listing.title,
+                              listingImage: bid.listing.imageUrl,
+                              bidAmount: bid.amount,
+                              askingPrice: bid.listing.price,
+                              sellerName: bid.listing.seller.name
+                            }));
+                            router.push(`/orders/order_${bid.id}`);
+                          }}
                           className="px-4 py-2 text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors cursor-pointer"
                         >
                           Proceed to Payment
