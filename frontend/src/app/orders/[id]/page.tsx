@@ -137,9 +137,10 @@ export default function OrderDetailPage() {
 
     fetchOrder();
 
-    // Poll for updates every 8 seconds
-    const interval = setInterval(fetchOrder, 8000);
-    return () => clearInterval(interval);
+    // Disable polling for now since we're using mock data
+    // In production, this would poll the backend for real-time updates
+    // const interval = setInterval(fetchOrder, 8000);
+    // return () => clearInterval(interval);
   }, [orderId, user]);
 
   // Redirect if not logged in
