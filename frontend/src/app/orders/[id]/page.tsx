@@ -12,6 +12,7 @@ import HandoverConfirmation from '@/components/order/HandoverConfirmation';
 import CompletionCelebration from '@/components/order/CompletionCelebration';
 import ReportIssueModal from '@/components/order/ReportIssueModal';
 import OrderSkeleton from '@/components/order/OrderSkeleton';
+import Toast from '@/components/Toast';
 import { MessageCircle, AlertTriangle, Package } from 'lucide-react';
 
 export default function OrderDetailPage() {
@@ -25,7 +26,7 @@ export default function OrderDetailPage() {
   const [error, setError] = useState('');
   const [showCelebration, setShowCelebration] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   // Determine user role
   const userRole = order && user ? (order.buyerId === user.id ? 'buyer' : 'seller') : null;
@@ -155,9 +156,8 @@ export default function OrderDetailPage() {
     }
   }, [order?.status]);
 
-  const showToast = (message: string) => {
-    setToastMessage(message);
-    setTimeout(() => setToastMessage(''), 3000);
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
   };
 
   const handlePaymentComplete = async () => {
@@ -454,10 +454,12 @@ export default function OrderDetailPage() {
       )}
 
       {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-4 right-4 bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg animate-in slide-in-from-bottom duration-300 z-50">
-          {toastMessage}
-        </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
       )}
     </div>
   );

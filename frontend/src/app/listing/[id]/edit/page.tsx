@@ -25,6 +25,7 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
     condition: 'USED_LIKE_NEW',
     category: 'ELECTRONICS',
     campus: 'Main Campus',
+    meetupLocation: '',
     imageUrl: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +51,7 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
             condition: foundListing.condition,
             category: foundListing.category,
             campus: foundListing.campus,
+            meetupLocation: foundListing.meetupLocation || '',
             imageUrl: foundListing.imageUrl
           });
         } else {
@@ -84,6 +86,10 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
 
     if (!formData.price || parseFloat(formData.price) <= 0) {
       newErrors.price = 'Price must be greater than 0';
+    }
+
+    if (!formData.meetupLocation.trim()) {
+      newErrors.meetupLocation = 'Meetup location is required';
     }
 
     if (!formData.imageUrl.trim()) {
@@ -275,6 +281,26 @@ export default function EditListingPage({ params }: { params: Promise<{ id: stri
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Meetup Location */}
+          <div>
+            <label htmlFor="meetupLocation" className="block text-sm font-semibold text-gray-900 mb-2">
+              Meetup Location <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="meetupLocation"
+              name="meetupLocation"
+              value={formData.meetupLocation}
+              onChange={handleChange}
+              placeholder="e.g., Library Entrance, Cafeteria, Main Gate"
+              className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 bg-white ${
+                errors.meetupLocation ? 'border-red-500' : 'border-gray-200'
+              }`}
+            />
+            {errors.meetupLocation && <p className="mt-1 text-sm text-red-500">{errors.meetupLocation}</p>}
+            <p className="text-xs text-gray-500 mt-1">Specify where buyers can meet you to collect the item</p>
           </div>
 
           {/* Image URL */}
