@@ -426,14 +426,15 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Ghana Card Verification */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-600 via-purple-500 to-pink-600"></div>
-              
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-purple-600" />
-                Ghana Card Verification
-              </h2>
+            {/* Ghana Card Verification - Sellers Only */}
+            {user.role === 'SELLER' && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-600 via-purple-500 to-pink-600"></div>
+                
+                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-purple-600" />
+                  Ghana Card Verification
+                </h2>
               
               <div className="space-y-6">
                 {/* Verification Status */}
@@ -564,6 +565,7 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
+            )}
           </div>
 
           {/* Right Column - Stats & Actions (1/3 width) */}
