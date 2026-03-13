@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Urbanist } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
-import { ToastProvider } from '@/components/Toast';
 
 const urbanist = Urbanist({ subsets: ['latin'] });
 
@@ -23,9 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={urbanist.className}>
         <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          {children}
         </AuthProvider>
       </body>
     </html>
