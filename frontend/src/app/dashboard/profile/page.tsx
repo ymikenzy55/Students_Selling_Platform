@@ -31,6 +31,8 @@ export default function ProfilePage() {
   });
   const [ghanaCardFile, setGhanaCardFile] = useState<File | null>(null);
   const [ghanaCardPreview, setGhanaCardPreview] = useState<string>('');
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState<string>('');
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'rejected'>('pending');
   const [error, setError] = useState('');
   
@@ -91,6 +93,25 @@ export default function ProfilePage() {
         setGhanaCardPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File size must be less than 5MB');
+        return;
+      }
+      
+      setProfilePicture(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfilePicturePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setError('');
     }
   };
 
@@ -218,6 +239,52 @@ export default function ProfilePage() {
                 <svg viewBox="0 0 100 100" className="w-full h-full fill-pink-500">
                   <polygon points="0,0 100,0 100,100" />
                 </svg>
+              </div>
+
+              {/* Profile Picture Section */}
+              <div className="flex items-center gap-6 mb-6 pb-6 border-b border-gray-100">
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                    {profilePicturePreview ? (
+                      <img src={profilePicturePreview} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="w-12 h-12 text-white" />
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    id="profile-picture-upload"
+                    accept="image/*"
+                    onChange={handleProfilePictureChange}
+                    className="hidden"
+                  />
+                  <label
+                    htmlFor="profile-picture-upload"
+                    className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors border-2 border-purple-200"
+                  >
+                    <Upload className="w-4 h-4 text-purple-600" />
+                  </label>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{formData.name}</h3>
+                  <p className="text-sm text-gray-500 mb-2">{formData.email}</p>
+                  <div className="flex items-center gap-2">
+                    {mockUserData.isVerified ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                        <ShieldCheck className="w-3 h-3" />
+                        Verified
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">
+                        <ShieldAlert className="w-3 h-3" />
+                        Unverified
+                      </span>
+                    )}
+                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold capitalize">
+                      {user.role.toLowerCase()}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center justify-between mb-6">

@@ -65,7 +65,13 @@ export default function RegisterPage() {
       const mockToken = 'mock_jwt_token_' + Date.now();
       
       login(mockToken, mockUser);
-      router.push('/');
+      
+      // Redirect based on role
+      if (role === 'SELLER') {
+        router.push('/dashboard');
+      } else {
+        router.push('/browse');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

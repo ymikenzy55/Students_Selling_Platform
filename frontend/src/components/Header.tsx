@@ -31,12 +31,57 @@ export default function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+
+  // Mock search suggestions - in production, this would come from API
+  const MOCK_POPULAR_SEARCHES = [
+    'MacBook Pro',
+    'iPhone 13',
+    'Biology Textbook',
+    'Gaming Mouse',
+    'Desk Lamp',
+    'Backpack',
+    'Calculator',
+    'Headphones',
+    'Study Table',
+    'Winter Jacket'
+  ];
+
+  const MOCK_RECENT_SEARCHES = [
+    'MacBook',
+    'Textbooks',
+    'Furniture'
+  ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      setShowSearchSuggestions(false);
       window.location.href = `/browse?search=${encodeURIComponent(searchQuery)}`;
     }
+  };
+
+  const handleSearchInputChange = (value: string) => {
+    setSearchQuery(value);
+    
+    if (value.trim().length > 0) {
+      // Filter suggestions based on input
+      const filtered = MOCK_POPULAR_SEARCHES.filter(item =>
+        item.toLowerCase().includes(value.toLowerCase())
+      ).slice(0, 5);
+      setSearchSuggestions(filtered);
+      setShowSearchSuggestions(true);
+    } else {
+      setSearchSuggestions([]);
+      setShowSearchSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSearchSuggestions(false);
+    window.location.href = `/browse?search=${encodeURIComponent(suggestion)}`;
   };
 
   return (
@@ -58,16 +103,107 @@ export default function Header() {
             </Link>
 
             {/* Search Bar - Desktop */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-2">
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl mx-2 relative">
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
+                  onFocus={() => {
+                    if (searchQuery.trim().length > 0) {
+                      setShowSearchSuggestions(true);
+                    }
+                  }}
+                  onBlur={() => {
+                    // Delay to allow click on suggestions
+                    setTimeout(() => setShowSearchSuggestions(false), 200);
+                  }}
                   placeholder="Search for items..."
                   className="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 bg-white"
                 />
+                
+                {/* Search Suggestions Dropdown */}
+                {showSearchSuggestions && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-80 overflow-y-auto">
+                    {searchQuery.trim().length === 0 ? (
+                      <>
+                        {/* Recent Searches */}
+                        {MOCK_RECENT_SEARCHES.length > 0 && (
+                          <div className="px-4 py-2">
+                            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Recent Searches</p>
+                            {MOCK_RECENT_SEARCHES.map((item, index) => (
+                              <button
+                                key={index}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  handleSuggestionClick(item);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                              >
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {item}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                        
+                        {/* Popular Searches */}
+                        <div className="px-4 py-2 border-t border-gray-100">
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Popular Searches</p>
+                          {MOCK_POPULAR_SEARCHES.slice(0, 5).map((item, index) => (
+                            <button
+                              key={index}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleSuggestionClick(item);
+                              }}
+                              className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                            >
+                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                              </svg>
+                              {item}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Filtered Suggestions */}
+                        {searchSuggestions.length > 0 ? (
+                          <div className="px-4 py-2">
+                            <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Suggestions</p>
+                            {searchSuggestions.map((item, index) => (
+                              <button
+                                key={index}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  handleSuggestionClick(item);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-purple-50 rounded-lg transition-colors flex items-center gap-2 cursor-pointer"
+                              >
+                                <Search className="w-4 h-4 text-gray-400" />
+                                <span dangerouslySetInnerHTML={{
+                                  __html: item.replace(
+                                    new RegExp(searchQuery, 'gi'),
+                                    (match) => `<strong class="text-purple-600">${match}</strong>`
+                                  )
+                                }} />
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                            No suggestions found
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </form>
 
@@ -208,16 +344,83 @@ export default function Header() {
           </div>
 
           {/* Mobile Search Bar */}
-          <form onSubmit={handleSearch} className="md:hidden pb-4">
+          <form onSubmit={handleSearch} className="md:hidden pb-4 relative">
             <div className="relative">
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchInputChange(e.target.value)}
+                onFocus={() => {
+                  if (searchQuery.trim().length > 0) {
+                    setShowSearchSuggestions(true);
+                  }
+                }}
+                onBlur={() => {
+                  setTimeout(() => setShowSearchSuggestions(false), 200);
+                }}
                 placeholder="Search for items..."
                 className="w-full px-4 py-2 pl-10 pr-4 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 bg-white"
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              
+              {/* Mobile Search Suggestions */}
+              {showSearchSuggestions && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-60 overflow-y-auto">
+                  {searchQuery.trim().length === 0 ? (
+                    <>
+                      {MOCK_RECENT_SEARCHES.length > 0 && (
+                        <div className="px-3 py-2">
+                          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Recent</p>
+                          {MOCK_RECENT_SEARCHES.map((item, index) => (
+                            <button
+                              key={index}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleSuggestionClick(item);
+                              }}
+                              className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-purple-50 rounded transition-colors cursor-pointer"
+                            >
+                              {item}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <div className="px-3 py-2 border-t border-gray-100">
+                        <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Popular</p>
+                        {MOCK_POPULAR_SEARCHES.slice(0, 3).map((item, index) => (
+                          <button
+                            key={index}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleSuggestionClick(item);
+                            }}
+                            className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-purple-50 rounded transition-colors cursor-pointer"
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    searchSuggestions.length > 0 && (
+                      <div className="px-3 py-2">
+                        {searchSuggestions.map((item, index) => (
+                          <button
+                            key={index}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              handleSuggestionClick(item);
+                            }}
+                            className="w-full text-left px-2 py-1.5 text-sm text-gray-700 hover:bg-purple-50 rounded transition-colors cursor-pointer"
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </div>
           </form>
         </div>
