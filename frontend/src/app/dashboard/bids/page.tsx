@@ -348,7 +348,7 @@ export default function MyBidsPage() {
                       
                       {bid.status === 'ACCEPTED' && (
                         <button
-                          onClick={() => router.push('/dashboard/transactions')}
+                          onClick={() => router.push(`/orders/order_${bid.id}`)}
                           className="px-4 py-2 text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors cursor-pointer"
                         >
                           Proceed to Payment

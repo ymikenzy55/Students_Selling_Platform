@@ -247,6 +247,20 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
 
+              {/* Meetup Location */}
+              {listing.meetupLocation && (
+                <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-semibold text-blue-900 mb-1">Meetup Location</h3>
+                      <p className="text-blue-800">{listing.meetupLocation}</p>
+                      <p className="text-xs text-blue-600 mt-1">Arrange specific time via chat after payment</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="mb-6">
                 <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
                   {listing.category}

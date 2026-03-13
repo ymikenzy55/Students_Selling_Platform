@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import DashboardHeader from '@/components/DashboardHeader';
 import Breadcrumb from '@/components/Breadcrumb';
+import VerificationPromptModal from '@/components/VerificationPromptModal';
 import { CATEGORIES, CONDITIONS, CAMPUSES } from '@/lib/mockData';
 import { Upload, X, Plus, ImageIcon } from 'lucide-react';
 
@@ -18,10 +19,12 @@ export default function CreateListingPage() {
   const [condition, setCondition] = useState('');
   const [category, setCategory] = useState('');
   const [campus, setCampus] = useState('');
+  const [meetupLocation, setMeetupLocation] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
   
   // Autocomplete states
   const [categoryInput, setCategoryInput] = useState('');
@@ -30,6 +33,19 @@ export default function CreateListingPage() {
   const [showCampusDropdown, setShowCampusDropdown] = useState(false);
   const [filteredCategories, setFilteredCategories] = useState(CATEGORIES);
   const [filteredCampuses, setFilteredCampuses] = useState(CAMPUSES);
+
+  // Check if seller is verified and show prompt on first listing
+  useEffect(() => {
+    if (user && user.role === 'SELLER') {
+      // Check if user is verified (mock - replace with real API call)
+      const isVerified = user.isVerified || false;
+      const hasSeenPrompt = localStorage.getItem('verification_prompt_seen');
+      
+      if (!isVerified && !hasSeenPrompt) {
+        setShowVerificationPrompt(true);
+      }
+    }
+  }, [user]);
 
   // Redirect if not authorized
   useEffect(() => {
@@ -159,6 +175,32 @@ export default function CreateListingPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleVerificationUpload = async (file: File) => {
+    try {
+      // Mock API call - replace with real verification upload
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mark prompt as seen
+      localStorage.setItem('verification_prompt_seen', 'true');
+      setShowVerificationPrompt(false);
+      
+      // Show success message
+      setError('');
+      alert('Ghana Card uploaded successfully! Your verification is pending review.');
+    } catch (err) {
+      alert('Failed to upload Ghana Card. Please try again.');
+    }
+  };
+
+  const handleSkipVerification = () => {
+    localStorage.setItem('verification_prompt_seen', 'true');
+    setShowVerificationPrompt(false);
+  };
+
+  const handleCloseVerificationModal = () => {
+    setShowVerificationPrompt(false);
   };
 
   return (
@@ -539,7 +581,7 @@ export default function CreateListingPage() {
               </div>
 
               {/* Campus */}
-              <div className="mb-0 relative">
+              <div className="mb-6 relative">
                 <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                   <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -585,6 +627,26 @@ export default function CreateListingPage() {
                     )}
                   </div>
                 )}
+              </div>
+
+              {/* Meetup Location */}
+              <div className="mb-0">
+                <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Meetup Location <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={meetupLocation}
+                  onChange={(e) => setMeetupLocation(e.target.value)}
+                  placeholder="e.g., Library Entrance, Cafeteria, Main Gate"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-gray-900 bg-white transition-all"
+                />
+                <p className="text-xs text-gray-500 mt-2">Specify where buyers can meet you to collect the item</p>
               </div>
             </div>
 
@@ -646,6 +708,15 @@ export default function CreateListingPage() {
           </div>
         </form>
       </main>
+
+      {/* Verification Prompt Modal */}
+      {showVerificationPrompt && (
+        <VerificationPromptModal
+          onClose={handleCloseVerificationModal}
+          onSkip={handleSkipVerification}
+          onVerify={handleVerificationUpload}
+        />
+      )}
     </div>
   );
 }

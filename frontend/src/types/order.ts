@@ -37,8 +37,6 @@ export interface Order {
     id: string;
     name: string;
     email: string;
-    phone: string;
-    whatsapp: string;
     isVerified: boolean;
   };
   strikes?: number;

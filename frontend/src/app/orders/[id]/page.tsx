@@ -40,41 +40,78 @@ export default function OrderDetailPage() {
         // Determine if current user is buyer or seller based on their role
         const isBuyer = user.role === 'BUYER';
         
-        const mockOrder: Order = {
-          id: orderId,
-          status: 'pending_payment',
-          amount: 850.00,
-          platformFee: 42.50,
-          sellerAmount: 807.50,
-          paymentDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          buyerConfirmedAt: null,
-          sellerConfirmedAt: null,
-          createdAt: new Date().toISOString(),
-          completedAt: null,
-          // Set buyerId/sellerId based on current user
-          buyerId: isBuyer ? user.id : 'other_buyer_id',
-          sellerId: isBuyer ? 'other_seller_id' : user.id,
-          item: {
-            id: 'listing_101',
-            title: 'MacBook Pro M2 - Excellent Condition',
-            imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
-            condition: 'USED_LIKE_NEW',
-            campus: 'North Campus'
-          },
-          buyer: {
-            id: isBuyer ? user.id : 'other_buyer_id',
-            name: isBuyer ? (user.name || 'You') : 'Jane Doe',
-            email: isBuyer ? user.email : 'jane@student.edu'
-          },
-          seller: {
-            id: isBuyer ? 'other_seller_id' : user.id,
-            name: isBuyer ? 'John Smith' : (user.name || 'You'),
-            email: isBuyer ? 'john@student.edu' : user.email,
-            phone: '+233 55 123 4567',
-            whatsapp: '+233551234567',
-            isVerified: true
-          }
-        };
+        // Map order IDs to corresponding listing data
+        let mockOrder: Order;
+        
+        if (orderId === 'order_bid_2') {
+          // iPhone 13 Pro order (accepted bid)
+          mockOrder = {
+            id: orderId,
+            status: 'pending_payment',
+            amount: 600.00,
+            platformFee: 30.00,
+            sellerAmount: 570.00,
+            paymentDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            buyerConfirmedAt: null,
+            sellerConfirmedAt: null,
+            createdAt: new Date().toISOString(),
+            completedAt: null,
+            buyerId: isBuyer ? user.id : 'other_buyer_id',
+            sellerId: isBuyer ? 'other_seller_id' : user.id,
+            item: {
+              id: 'listing_103',
+              title: 'iPhone 13 Pro - 256GB',
+              imageUrl: 'https://images.unsplash.com/photo-1592286927505-c0d0e0c5d7c0?w=400',
+              condition: 'USED_LIKE_NEW',
+              campus: 'Main Campus'
+            },
+            buyer: {
+              id: isBuyer ? user.id : 'other_buyer_id',
+              name: isBuyer ? (user.name || 'You') : 'Jane Doe',
+              email: isBuyer ? user.email : 'jane@student.edu'
+            },
+            seller: {
+              id: isBuyer ? 'other_seller_id' : user.id,
+              name: isBuyer ? 'Mike Johnson' : (user.name || 'You'),
+              email: isBuyer ? 'mike@student.edu' : user.email,
+              isVerified: true
+            }
+          };
+        } else {
+          // Default MacBook order
+          mockOrder = {
+            id: orderId,
+            status: 'pending_payment',
+            amount: 850.00,
+            platformFee: 42.50,
+            sellerAmount: 807.50,
+            paymentDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            buyerConfirmedAt: null,
+            sellerConfirmedAt: null,
+            createdAt: new Date().toISOString(),
+            completedAt: null,
+            buyerId: isBuyer ? user.id : 'other_buyer_id',
+            sellerId: isBuyer ? 'other_seller_id' : user.id,
+            item: {
+              id: 'listing_101',
+              title: 'MacBook Pro M2 - Excellent Condition',
+              imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
+              condition: 'USED_LIKE_NEW',
+              campus: 'North Campus'
+            },
+            buyer: {
+              id: isBuyer ? user.id : 'other_buyer_id',
+              name: isBuyer ? (user.name || 'You') : 'Jane Doe',
+              email: isBuyer ? user.email : 'jane@student.edu'
+            },
+            seller: {
+              id: isBuyer ? 'other_seller_id' : user.id,
+              name: isBuyer ? 'John Smith' : (user.name || 'You'),
+              email: isBuyer ? 'john@student.edu' : user.email,
+              isVerified: true
+            }
+          };
+        }
 
         setOrder(mockOrder);
         setIsLoading(false);
@@ -283,8 +320,7 @@ export default function OrderDetailPage() {
               <ContactRevealSection
                 isLocked={false}
                 sellerName={order.seller.name}
-                phone={order.seller.phone}
-                whatsapp={order.seller.whatsapp}
+                sellerId={order.seller.id}
                 isVerified={order.seller.isVerified}
               />
             )}
@@ -293,8 +329,7 @@ export default function OrderDetailPage() {
               <ContactRevealSection
                 isLocked={true}
                 sellerName={order.seller.name}
-                phone={order.seller.phone}
-                whatsapp={order.seller.whatsapp}
+                sellerId={order.seller.id}
                 isVerified={order.seller.isVerified}
               />
             )}
