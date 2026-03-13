@@ -82,7 +82,7 @@ export default function MyListingsPage() {
     <div className="min-h-screen bg-gray-50">
       <DashboardHeader />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         <Breadcrumb 
           items={[
             { label: 'Dashboard', href: '/dashboard' },
@@ -91,19 +91,19 @@ export default function MyListingsPage() {
         />
         
         {/* Page Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 mb-2">My Listings</h1>
-            <p className="text-gray-600">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1 sm:mb-2">My Listings</h1>
+            <p className="text-sm sm:text-base text-gray-600">
               {listings.length} {listings.length === 1 ? 'listing' : 'listings'} total
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {/* View Toggle */}
             <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-2 rounded transition-all ${
+                className={`p-2 rounded transition-all cursor-pointer ${
                   viewMode === 'grid'
                     ? 'bg-purple-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -114,7 +114,7 @@ export default function MyListingsPage() {
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded transition-all ${
+                className={`p-2 rounded transition-all cursor-pointer ${
                   viewMode === 'list'
                     ? 'bg-purple-600 text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -126,9 +126,9 @@ export default function MyListingsPage() {
             </div>
             <button
               onClick={() => router.push('/create-listing')}
-              className="px-6 py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium shadow-md hover:shadow-lg cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px]"
+              className="flex-1 sm:flex-none px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg border-2 border-transparent hover:border-purple-300 transition-all font-medium shadow-md hover:shadow-lg cursor-pointer relative before:absolute before:inset-0 before:rounded-lg before:p-[2px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 before:m-[-2px] text-sm sm:text-base"
             >
-              <span className="text-purple-600">Create New Listing</span>
+              <span className="text-purple-600">Create New</span>
             </button>
           </div>
         </div>
@@ -140,11 +140,11 @@ export default function MyListingsPage() {
               {listings.map(listing => (
                 <div
                   key={listing.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6 hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-start gap-6">
+                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
                     {/* Image */}
-                    <div className="relative w-32 h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                    <div className="relative w-full sm:w-32 h-48 sm:h-32 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
                       <Image
                         src={listing.imageUrl}
                         alt={listing.title}
@@ -161,21 +161,21 @@ export default function MyListingsPage() {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4 mb-2">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <div className="flex-1 min-w-0 w-full">
+                      <div className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-4 mb-2">
+                        <div className="flex-1 w-full">
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
                             {listing.title}
                           </h3>
                           <p className="text-sm text-gray-600 line-clamp-2 mb-3">
                             {listing.description}
                           </p>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                          <span className="text-2xl font-extrabold text-purple-600 block">
+                        <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 w-full sm:w-auto justify-between sm:justify-start flex-shrink-0">
+                          <span className="text-xl sm:text-2xl font-extrabold text-purple-600">
                             GH₵{listing.price.toFixed(2)}
                           </span>
-                          <span className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold ${
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
                             listing.isSoldOut 
                               ? 'bg-red-100 text-red-700' 
                               : 'bg-green-100 text-green-700'
@@ -186,48 +186,49 @@ export default function MyListingsPage() {
                       </div>
 
                       {/* Meta Info */}
-                      <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 mb-4">
                         <span className="font-medium">{formatCondition(listing.condition)}</span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>{listing.category}</span>
-                        <span>•</span>
-                        <span>{listing.campus}</span>
-                        <span>•</span>
+                        <span className="hidden sm:inline">•</span>
+                        <span className="hidden sm:inline">{listing.campus}</span>
+                        <span className="hidden sm:inline">•</span>
                         <span>Posted {formatDate(listing.createdAt)}</span>
                       </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
                         <button
                           onClick={() => router.push(`/listing/${listing.id}`)}
-                          className="px-4 py-2 text-sm font-medium bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors cursor-pointer"
+                          className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-purple-600 rounded-lg border-2 border-purple-300 hover:border-purple-400 transition-colors cursor-pointer"
                         >
-                          View Details
+                          View
                         </button>
                         {!listing.isSoldOut && (
                           <>
                             <button
                               onClick={() => handleMarkAsSold(listing.id)}
-                              className="px-4 py-2 text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors flex items-center gap-2 cursor-pointer"
+                              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-green-600 rounded-lg border-2 border-green-300 hover:border-green-400 transition-colors flex items-center gap-1.5 cursor-pointer"
                             >
-                              <CheckCircle className="w-4 h-4" />
-                              Mark as Sold
+                              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Mark as Sold</span>
+                              <span className="sm:hidden">Sold</span>
                             </button>
                             <button
                               onClick={() => router.push(`/listing/${listing.id}/edit`)}
-                              className="px-4 py-2 text-sm font-medium bg-white text-gray-600 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-colors flex items-center gap-2 cursor-pointer"
+                              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-gray-600 rounded-lg border-2 border-gray-300 hover:border-gray-400 transition-colors flex items-center gap-1.5 cursor-pointer"
                             >
-                              <Edit className="w-4 h-4" />
-                              Edit
+                              <Edit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Edit</span>
                             </button>
                           </>
                         )}
                         <button
                           onClick={() => handleDeleteClick(listing.id)}
-                          className="px-4 py-2 text-sm font-medium bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-colors flex items-center gap-2 ml-auto cursor-pointer"
+                          className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-colors flex items-center gap-1.5 sm:ml-auto cursor-pointer"
                         >
-                          <Trash2 className="w-4 h-4" />
-                          Delete
+                          <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">Delete</span>
                         </button>
                       </div>
                     </div>
@@ -236,7 +237,7 @@ export default function MyListingsPage() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {listings.map(listing => (
                 <div
                   key={listing.id}

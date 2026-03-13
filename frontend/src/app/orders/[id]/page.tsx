@@ -310,7 +310,7 @@ export default function OrderDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
         <Breadcrumb
           items={[
             { label: 'Dashboard', href: '/dashboard' },
@@ -319,9 +319,9 @@ export default function OrderDetailPage() {
           ]}
         />
 
-        <div className="mb-6">
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Order Details</h1>
-          <p className="text-gray-600">
+        <div className="mb-4 sm:mb-6">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-1 sm:mb-2">Order Details</h1>
+          <p className="text-sm sm:text-base text-gray-600">
             {userRole === 'buyer' ? 'Track your purchase' : 'Manage your sale'}
           </p>
         </div>
