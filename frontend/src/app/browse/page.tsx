@@ -297,11 +297,11 @@ export default function BrowsePage() {
           {/* Main Content */}
           <div className="flex-1">
             {/* Sort and Mobile Filter Toggle */}
-            <div className="flex items-center justify-between mb-6 gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   <span>Filters</span>
@@ -311,7 +311,7 @@ export default function BrowsePage() {
                 <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded transition-all ${
+                    className={`p-2 rounded transition-all cursor-pointer ${
                       viewMode === 'grid'
                         ? 'bg-purple-600 text-white'
                         : 'text-gray-600 hover:bg-gray-100'
@@ -322,7 +322,7 @@ export default function BrowsePage() {
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded transition-all ${
+                    className={`p-2 rounded transition-all cursor-pointer ${
                       viewMode === 'list'
                         ? 'bg-purple-600 text-white'
                         : 'text-gray-600 hover:bg-gray-100'
@@ -334,12 +334,12 @@ export default function BrowsePage() {
                 </div>
               </div>
 
-              {/* Sort Bar */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-medium text-gray-700 hidden sm:block">Sort by:</span>
+              {/* Sort Bar - Mobile Optimized */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 -mx-4 px-4 sm:mx-0 sm:px-0">
+                <span className="text-sm font-medium text-gray-700 hidden sm:block flex-shrink-0">Sort:</span>
                 <button
                   onClick={() => setSortBy('newest')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex-shrink-0 cursor-pointer ${
                     sortBy === 'newest'
                       ? 'bg-purple-600 text-white shadow-md'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -348,18 +348,8 @@ export default function BrowsePage() {
                   Newest
                 </button>
                 <button
-                  onClick={() => setSortBy('oldest')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    sortBy === 'oldest'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Oldest
-                </button>
-                <button
                   onClick={() => setSortBy('price-low')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex-shrink-0 cursor-pointer ${
                     sortBy === 'price-low'
                       ? 'bg-purple-600 text-white shadow-md'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -369,7 +359,7 @@ export default function BrowsePage() {
                 </button>
                 <button
                   onClick={() => setSortBy('price-high')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex-shrink-0 cursor-pointer ${
                     sortBy === 'price-high'
                       ? 'bg-purple-600 text-white shadow-md'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
@@ -379,23 +369,13 @@ export default function BrowsePage() {
                 </button>
                 <button
                   onClick={() => setSortBy('title-az')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  className={`px-3 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all flex-shrink-0 cursor-pointer ${
                     sortBy === 'title-az'
                       ? 'bg-purple-600 text-white shadow-md'
                       : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
                   }`}
                 >
                   A-Z
-                </button>
-                <button
-                  onClick={() => setSortBy('title-za')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    sortBy === 'title-za'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'
-                  }`}
-                >
-                  Z-A
                 </button>
               </div>
             </div>

@@ -332,32 +332,32 @@ export default function OrderDetailPage() {
           onDeadlineExpire={handleDeadlineExpire}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 lg:space-y-6">
             {/* Item Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Package className="w-5 h-5 text-purple-600" />
-                <h2 className="text-xl font-bold text-gray-900">Item Details</h2>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6">
+              <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <Package className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Item Details</h2>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-3 sm:gap-4">
                 <img
                   src={order.item.imageUrl}
                   alt={order.item.title}
-                  className="w-24 h-24 object-cover rounded-lg"
+                  className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <h3 className="font-bold text-gray-900 mb-1">{order.item.title}</h3>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-gray-900 mb-1 text-sm sm:text-base">{order.item.title}</h3>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
+                    <span className="px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-700 rounded text-xs font-semibold">
                       {order.item.condition}
                     </span>
-                    <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">
+                    <span className="px-2 py-0.5 sm:py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">
                       {order.item.campus}
                     </span>
                   </div>
-                  <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  <p className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     GH₵ {order.amount.toFixed(2)}
                   </p>
                 </div>
@@ -404,11 +404,11 @@ export default function OrderDetailPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 lg:space-y-6">
             {/* Order Summary */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Order Summary</h3>
-              <div className="space-y-3 text-sm">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6">
+              <h3 className="font-bold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">Order Summary</h3>
+              <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Order ID</span>
                   <span className="font-semibold text-gray-900">#{orderId.slice(0, 8)}</span>
@@ -427,24 +427,24 @@ export default function OrderDetailPage() {
                     {userRole === 'buyer' ? order.seller.name : order.buyer.name}
                   </span>
                 </div>
-                <div className="border-t border-gray-200 pt-3">
-                  <div className="flex justify-between mb-2">
+                <div className="border-t border-gray-200 pt-2 sm:pt-3">
+                  <div className="flex justify-between mb-1 sm:mb-2">
                     <span className="text-gray-600">Item Price</span>
                     <span className="font-semibold text-gray-900">GH₵ {order.amount.toFixed(2)}</span>
                   </div>
                   {userRole === 'buyer' && (
-                    <div className="flex justify-between mb-2">
+                    <div className="flex justify-between mb-1 sm:mb-2">
                       <span className="text-gray-600">Platform Fee</span>
                       <span className="font-semibold text-gray-900">GH₵ {order.platformFee.toFixed(2)}</span>
                     </div>
                   )}
                   {userRole === 'seller' && (
-                    <div className="flex justify-between mb-2">
+                    <div className="flex justify-between mb-1 sm:mb-2">
                       <span className="text-gray-600">Platform Fee (5%)</span>
                       <span className="font-semibold text-red-600">-GH₵ {order.platformFee.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between font-bold text-lg">
+                  <div className="flex justify-between font-bold text-base sm:text-lg">
                     <span className="text-gray-900">
                       {userRole === 'buyer' ? 'Total Paid' : 'You Receive'}
                     </span>
@@ -457,19 +457,19 @@ export default function OrderDetailPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Quick Actions</h3>
-              <div className="space-y-3">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6">
+              <h3 className="font-bold text-gray-900 mb-3 sm:mb-4 text-base sm:text-lg">Quick Actions</h3>
+              <div className="space-y-2 sm:space-y-3">
                 <button
                   onClick={() => router.push('/messages')}
-                  className="w-full px-4 py-3 bg-white text-gray-700 rounded-lg border-2 border-gray-300 hover:border-purple-300 transition-all font-medium cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white text-gray-700 rounded-lg border-2 border-gray-300 hover:border-purple-300 transition-all font-medium cursor-pointer flex items-center justify-center gap-2 text-sm"
                 >
                   <MessageCircle className="w-4 h-4" />
                   Message {userRole === 'buyer' ? 'Seller' : 'Buyer'}
                 </button>
                 <button
                   onClick={() => setShowReportModal(true)}
-                  className="w-full px-4 py-3 bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-all font-medium cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white text-red-600 rounded-lg border-2 border-red-300 hover:border-red-400 transition-all font-medium cursor-pointer flex items-center justify-center gap-2 text-sm"
                 >
                   <AlertTriangle className="w-4 h-4" />
                   Report Issue
