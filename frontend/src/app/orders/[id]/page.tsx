@@ -113,8 +113,21 @@ export default function OrderDetailPage() {
           };
         }
 
-        setOrder(mockOrder);
-        setIsLoading(false);
+        // Only set order if it's not already set, or preserve current status
+        setOrder(prev => {
+          if (!prev) {
+            setIsLoading(false);
+            return mockOrder;
+          }
+          // Preserve the current status and confirmation states
+          return {
+            ...mockOrder,
+            status: prev.status,
+            buyerConfirmedAt: prev.buyerConfirmedAt,
+            sellerConfirmedAt: prev.sellerConfirmedAt,
+            completedAt: prev.completedAt
+          };
+        });
       } catch (err) {
         setError('Failed to load order details');
         setIsLoading(false);
