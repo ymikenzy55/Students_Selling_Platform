@@ -266,7 +266,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
               <h2 className="text-lg font-bold text-gray-900 mb-4">Bid History</h2>
               {bids.length > 0 ? (
                 <div className="space-y-3">
-                  {bids.map(bid => (
+                  {bids.map((bid, index) => (
                     <div
                       key={bid.id}
                       className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
@@ -276,7 +276,7 @@ export default function ListingDetailPage({ params }: { params: Promise<{ id: st
                           <User className="w-5 h-5 text-purple-600" />
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">{bid.buyer.name}</p>
+                          <p className="font-medium text-gray-900">Bidder #{bids.length - index}</p>
                           <p className="text-sm text-gray-500">{formatTimeAgo(bid.createdAt)}</p>
                         </div>
                       </div>

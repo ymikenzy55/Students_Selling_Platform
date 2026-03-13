@@ -42,12 +42,14 @@ export default function Home() {
                     Browse Listings
                   </Link>
                   {user ? (
-                    <Link
-                      href="/create-listing"
-                      className="px-6 py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
-                    >
-                      Start Selling
-                    </Link>
+                    user.role === 'SELLER' && (
+                      <Link
+                        href="/create-listing"
+                        className="px-6 py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
+                      >
+                        Start Selling
+                      </Link>
+                    )
                   ) : (
                     <Link
                       href="/register"
@@ -415,12 +417,14 @@ export default function Home() {
               >
                 Browse Listings
               </Link>
-              <Link
-                href="/create-listing"
-                className="px-8 py-3 bg-transparent text-white font-bold rounded-full border-2 border-white hover:bg-white hover:text-purple-600 transition-all"
-              >
-                Start Selling
-              </Link>
+              {(!user || user.role === 'SELLER') && (
+                <Link
+                  href={user ? "/create-listing" : "/register"}
+                  className="px-8 py-3 bg-transparent text-white font-bold rounded-full border-2 border-white hover:bg-white hover:text-purple-600 transition-all"
+                >
+                  Start Selling
+                </Link>
+              )}
             </div>
           </div>
 
