@@ -16,28 +16,34 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-pink-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-0 items-center min-h-[500px]">
+        {/* Mobile Background Image with Overlay */}
+        <div className="absolute inset-0 lg:hidden">
+          <img src="/logo.jpg" alt="Background" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/80 to-purple-50/90"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-0 items-center min-h-[450px] sm:min-h-[500px]">
             {/* Left Content */}
-            <div className="relative z-10 px-4 py-12 sm:px-6 lg:px-8">
+            <div className="relative z-20 px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
               <div className="max-w-xl">
-                <div className="inline-block mb-3 px-4 py-2 bg-purple-100 rounded-full">
-                  <span className="text-sm font-semibold text-purple-700">🎓 Bid Smart • Buy Easy • Sell Fast</span>
+                <div className="inline-block mb-2 sm:mb-3 px-3 sm:px-4 py-1.5 sm:py-2 bg-purple-100 rounded-full">
+                  <span className="text-xs sm:text-sm font-semibold text-purple-700">🎓 Bid Smart • Buy Easy • Sell Fast</span>
                 </div>
-                <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-5xl">
-                  <span className="block mb-2">Your campus</span>
-                  <span className="block mb-2">marketplace for</span>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
+                  <span className="block mb-1 sm:mb-2">Your campus</span>
+                  <span className="block mb-1 sm:mb-2">marketplace for</span>
                   <span className="block bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                     smart deals
                   </span>
                 </h1>
-                <p className="mt-4 text-base text-gray-600 leading-relaxed">
+                <p className="mt-3 sm:mt-4 text-sm sm:text-base text-gray-600 leading-relaxed">
                   Place bids, buy instantly, or list items in seconds. From textbooks to electronics, trade safely with verified students on your campus.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4">
+                <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <Link
                     href="/browse"
-                    className="px-6 py-3 text-sm font-bold rounded-2xl text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] text-center"
+                    className="px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-bold rounded-2xl text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] text-center"
                   >
                     Browse Listings
                   </Link>
@@ -45,7 +51,7 @@ export default function Home() {
                     user.role === 'SELLER' && (
                       <Link
                         href="/create-listing"
-                        className="px-6 py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
+                        className="px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
                       >
                         Start Selling
                       </Link>
@@ -53,7 +59,7 @@ export default function Home() {
                   ) : (
                     <Link
                       href="/register"
-                      className="px-6 py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
+                      className="px-5 sm:px-6 py-2.5 sm:py-3 text-sm font-bold rounded-2xl text-purple-600 bg-white border-2 border-purple-600 hover:bg-purple-50 transition-all shadow-md hover:shadow-lg text-center"
                     >
                       Sign Up Free
                     </Link>
@@ -61,28 +67,28 @@ export default function Home() {
                 </div>
                 
                 {/* Stats */}
-                <div className="mt-8 grid grid-cols-3 gap-4">
+                <div className="mt-6 sm:mt-8 grid grid-cols-3 gap-3 sm:gap-4">
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">500+</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">500+</div>
                     <div className="text-xs text-gray-600">Active Listings</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">1K+</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">1K+</div>
                     <div className="text-xs text-gray-600">Students</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-gray-900">98%</div>
+                    <div className="text-xl sm:text-2xl font-bold text-gray-900">98%</div>
                     <div className="text-xs text-gray-600">Satisfaction</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Image - Bubble Shape */}
-            <div className="relative h-full min-h-[500px]">
+            {/* Right Image - Bubble Shape - Desktop Only */}
+            <div className="relative h-64 sm:h-80 lg:h-full lg:min-h-[500px] hidden lg:block">
               
               {/* ACTIVE: Bubble Shape - Organic rounded blob */}
-              <div className="absolute inset-0 w-full h-full flex items-center justify-center p-6">
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center p-4 sm:p-6">
                 <div 
                   className="w-full h-full overflow-hidden"
                   style={{
@@ -99,9 +105,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {/* Easy Trading */}
             <div className="group h-64 perspective-1000">
               <div className="relative h-full w-full transition-all duration-500 preserve-3d group-hover:rotate-y-180">
@@ -202,23 +208,23 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="relative py-16 overflow-hidden" style={{
+      <section className="relative py-12 sm:py-16 overflow-hidden" style={{
         background: 'radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.3) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.3) 0px, transparent 50%), radial-gradient(at 0% 100%, rgba(217, 70, 239, 0.3) 0px, transparent 50%)',
         backgroundColor: '#fafafa'
       }}>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Title */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-lg text-gray-600">Simple steps to start buying or selling on campus</p>
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3 sm:mb-4">How It Works</h2>
+            <p className="text-base sm:text-lg text-gray-600">Simple steps to start buying or selling on campus</p>
           </div>
 
           {/* Tabs */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1">
+          <div className="flex justify-center mb-8 sm:mb-12">
+            <div className="inline-flex rounded-lg border border-gray-200 bg-white p-1 w-full max-w-md sm:w-auto">
               <button
                 onClick={() => setActiveTab('seller')}
-                className={`px-8 py-3 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex-1 sm:flex-none px-4 sm:px-8 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                   activeTab === 'seller'
                     ? 'bg-purple-600 text-white shadow-md'
                     : 'text-gray-600 hover:text-gray-900'
@@ -228,7 +234,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('buyer')}
-                className={`px-8 py-3 rounded-lg text-sm font-semibold transition-all ${
+                className={`flex-1 sm:flex-none px-4 sm:px-8 py-2.5 sm:py-3 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
                   activeTab === 'buyer'
                     ? 'bg-purple-600 text-white shadow-md'
                     : 'text-gray-600 hover:text-gray-900'
@@ -241,7 +247,7 @@ export default function Home() {
 
           {/* Seller Steps */}
           {activeTab === 'seller' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
               {/* Step 1 */}
               <div className="bg-white rounded-xl overflow-hidden shadow-md">
                 <div className="h-48 relative">
@@ -285,7 +291,7 @@ export default function Home() {
 
           {/* Buyer Steps */}
           {activeTab === 'buyer' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
               {/* Step 1 */}
               <div className="bg-white rounded-xl overflow-hidden shadow-md">
                 <div className="h-48 bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center">
@@ -330,30 +336,36 @@ export default function Home() {
       </section>
 
       {/* Community Section */}
-      <section className="bg-white py-16 relative overflow-hidden">
-        {/* Background decorative SVG */}
-        <div className="absolute top-0 right-0 w-64 h-64 opacity-10">
+      <section className="bg-white py-12 sm:py-16 relative overflow-hidden">
+        {/* Background decorative SVG - Desktop */}
+        <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 opacity-10 hidden lg:block">
           <img src="/add-design.svg" alt="" className="w-full h-full" />
         </div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 opacity-10">
+        <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-64 sm:h-64 opacity-10 hidden lg:block">
           <img src="/add-design.svg" alt="" className="w-full h-full transform rotate-180" />
         </div>
         
+        {/* Mobile Background Image with Overlay */}
+        <div className="absolute inset-0 lg:hidden">
+          <img src="/logo.jpg" alt="Community Background" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-white/90"></div>
+        </div>
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             {/* Left Content */}
             <div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-6">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-4 sm:mb-6">
                 Discover the sBay Community
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                 sBay connects you to fellow students and closets filled with unique styles, hard-to-find pieces, and endless items to discover. Get started today and join our vibrant & diverse community who make shopping and selling simple, social, and sustainable!
               </p>
             </div>
 
-            {/* Right Image */}
-            <div className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-2xl h-80">
+            {/* Right Image - Desktop Only */}
+            <div className="relative hidden lg:block">
+              <div className="rounded-2xl overflow-hidden shadow-2xl h-64 sm:h-80">
                 <img 
                   src="/logo.jpg" 
                   alt="sBay Community" 
@@ -361,37 +373,37 @@ export default function Home() {
                 />
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-purple-200 rounded-full opacity-50 blur-2xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-pink-200 rounded-full opacity-50 blur-2xl"></div>
+              <div className="absolute -top-4 -right-4 w-20 h-20 sm:w-24 sm:h-24 bg-purple-200 rounded-full opacity-50 blur-2xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-24 h-24 sm:w-32 sm:h-32 bg-pink-200 rounded-full opacity-50 blur-2xl"></div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <section className="bg-gray-50 py-16">
+      <section className="bg-gray-50 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3 sm:mb-4">
             Stay in the Loop
           </h2>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
             Get the latest deals, campus trends, and exclusive offers delivered straight to your inbox.
           </p>
-          <form className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
+          <form className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-xl mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-6 py-3 rounded-full text-gray-900 placeholder-gray-500 bg-white border-2 border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 shadow-sm"
+              className="flex-1 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full text-sm sm:text-base text-gray-900 placeholder-gray-500 bg-white border-2 border-gray-300 focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-600/20 shadow-sm"
               required
             />
             <button
               type="submit"
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] whitespace-nowrap"
+              className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm sm:text-base font-bold rounded-full hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] whitespace-nowrap"
             >
               Subscribe
             </button>
           </form>
-          <p className="text-sm text-gray-500 mt-4">
+          <p className="text-xs sm:text-sm text-gray-500 mt-3 sm:mt-4">
             No spam, unsubscribe anytime. We respect your privacy.
           </p>
         </div>

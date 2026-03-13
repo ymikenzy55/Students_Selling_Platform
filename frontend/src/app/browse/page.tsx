@@ -380,100 +380,130 @@ export default function BrowsePage() {
               </div>
             </div>
 
-            {/* Mobile Filters */}
+            {/* Mobile Filters - Bottom Sheet */}
             {showFilters && (
-              <div className="lg:hidden mb-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-gray-900">Filters</h2>
-                  <button onClick={() => setShowFilters(false)}>
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </div>
+              <div className="lg:hidden fixed inset-0 z-50">
+                {/* Backdrop */}
+                <div 
+                  className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                  onClick={() => setShowFilters(false)}
+                ></div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                    >
-                      <option value="">All Categories</option>
-                      {CATEGORIES.map(cat => (
-                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                      ))}
-                    </select>
+                {/* Bottom Sheet */}
+                <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[85vh] overflow-hidden animate-slide-up">
+                  {/* Handle */}
+                  <div className="flex justify-center pt-3 pb-2">
+                    <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Condition</label>
-                    <select
-                      value={selectedCondition}
-                      onChange={(e) => setSelectedCondition(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                  
+                  {/* Header */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+                    <h2 className="text-lg font-bold text-gray-900">Filters</h2>
+                    <button 
+                      onClick={() => setShowFilters(false)}
+                      className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
                     >
-                      <option value="">All Conditions</option>
-                      {CONDITIONS.map(cond => (
-                        <option key={cond.value} value={cond.value}>{cond.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Campus</label>
-                    <select
-                      value={selectedCampus}
-                      onChange={(e) => setSelectedCampus(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                    >
-                      <option value="">All Campuses</option>
-                      {CAMPUSES.map(campus => (
-                        <option key={campus.value} value={campus.value}>{campus.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={verifiedOnly}
-                        onChange={(e) => setVerifiedOnly(e.target.checked)}
-                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
-                      />
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-700">Verified Sellers Only</span>
-                        <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    </label>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Minimum Seller Rating
-                    </label>
-                    <select
-                      value={minRating}
-                      onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
-                    >
-                      <option value="0">Any Rating</option>
-                      <option value="3">3+ Stars ⭐⭐⭐</option>
-                      <option value="4">4+ Stars ⭐⭐⭐⭐</option>
-                      <option value="4.5">4.5+ Stars ⭐⭐⭐⭐⭐</option>
-                    </select>
-                  </div>
-
-                  {hasActiveFilters && (
-                    <button
-                      onClick={clearFilters}
-                      className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 cursor-pointer"
-                    >
-                      Clear Filters
+                      <X className="w-5 h-5 text-gray-500" />
                     </button>
-                  )}
+                  </div>
+                  
+                  {/* Scrollable Content */}
+                  <div className="overflow-y-auto max-h-[calc(85vh-120px)] px-4 py-4">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+                        <select
+                          value={selectedCategory}
+                          onChange={(e) => setSelectedCategory(e.target.value)}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        >
+                          <option value="">All Categories</option>
+                          {CATEGORIES.map(cat => (
+                            <option key={cat.value} value={cat.value}>{cat.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Condition</label>
+                        <select
+                          value={selectedCondition}
+                          onChange={(e) => setSelectedCondition(e.target.value)}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        >
+                          <option value="">All Conditions</option>
+                          {CONDITIONS.map(cond => (
+                            <option key={cond.value} value={cond.value}>{cond.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Campus</label>
+                        <select
+                          value={selectedCampus}
+                          onChange={(e) => setSelectedCampus(e.target.value)}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        >
+                          <option value="">All Campuses</option>
+                          {CAMPUSES.map(campus => (
+                            <option key={campus.value} value={campus.value}>{campus.label}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="flex items-center gap-3 cursor-pointer p-3 bg-gray-50 rounded-lg">
+                          <input
+                            type="checkbox"
+                            checked={verifiedOnly}
+                            onChange={(e) => setVerifiedOnly(e.target.checked)}
+                            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
+                          />
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-gray-700">Verified Sellers Only</span>
+                            <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Minimum Seller Rating
+                        </label>
+                        <select
+                          value={minRating}
+                          onChange={(e) => setMinRating(parseFloat(e.target.value))}
+                          className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-gray-900"
+                        >
+                          <option value="0">Any Rating</option>
+                          <option value="3">3+ Stars ⭐⭐⭐</option>
+                          <option value="4">4+ Stars ⭐⭐⭐⭐</option>
+                          <option value="4.5">4.5+ Stars ⭐⭐⭐⭐⭐</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Actions */}
+                  <div className="border-t border-gray-200 p-4 flex gap-3">
+                    {hasActiveFilters && (
+                      <button
+                        onClick={clearFilters}
+                        className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 cursor-pointer"
+                      >
+                        Clear All
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowFilters(false)}
+                      className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-medium hover:from-purple-700 hover:to-pink-700 cursor-pointer"
+                    >
+                      Show Results
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
